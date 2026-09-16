@@ -1,0 +1,6 @@
+{
+  "name": "مختبر أوامر الذكاء الاصطناعي | Interactive AI Prompt Library",
+  "description": "منصة متخصصة في هندسة وتوليد أوامر الذكاء الاصطناعي، وتصميم الجرائد والإنفوجرافيك التعليمي A4، وأتمتة مسارات العمل الأكاديمية والمهنية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

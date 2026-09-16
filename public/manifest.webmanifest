@@ -1,0 +1,71 @@
+{
+  "id": "/",
+  "name": "مختبر أوامر الذكاء الاصطناعي | Interactive AI Prompt Lab",
+  "short_name": "أوامر AI",
+  "description": "منصة سحابية متقدمة لهندسة واختبار وبناء وتوليد أوامر الذكاء الاصطناعي المعيارية",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#0f172a",
+  "background_color": "#020617",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["productivity", "education", "utilities", "developer"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "الجريدة التعليمية المدرسية",
+      "short_name": "جريدة الدرس",
+      "description": "تحويل أي درس لجريدة تعليمية وإنفوجرافيك مطبوع",
+      "url": "/#flows",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "محرر الأوامر التفاعلي",
+      "short_name": "باني الأوامر",
+      "description": "بناء واختبار أوامر الذكاء الاصطناعي بالمعاملات الحية",
+      "url": "/#playground",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "مكتبة الأوامر الشاملة",
+      "short_name": "المكتبة",
+      "description": "استكشاف أوامر البرمجة والتعليم والإعلانات والتصميم",
+      "url": "/#library",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

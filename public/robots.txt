@@ -1,0 +1,40 @@
+# ==========================================================
+# robots.txt for Interactive AI Prompt Studio & Educational Lab
+# ==========================================================
+
+User-agent: *
+Allow: /
+Allow: /#dashboard
+Allow: /#library
+Allow: /#flows
+Allow: /#playground
+Allow: /#workflows
+Allow: /#generator
+Disallow: /#settings
+Disallow: /_redirects
+Disallow: /assets/*.map$
+
+# AI Search & LLM Web Crawlers (Allowed for Grounding & Search Indexing)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Host & Sitemap Directives
+Sitemap: /sitemap.xml

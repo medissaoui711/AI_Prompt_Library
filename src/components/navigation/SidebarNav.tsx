@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   Library, 
-  FlaskConical, 
-  GitMerge, 
-  Compass, 
-  PenTool, 
-  Settings,
-  Sparkles
+  GraduationCap, 
+  Star, 
+  Layers, 
+  Settings, 
+  HelpCircle, 
+  Sparkles, 
+  ChevronDown, 
+  ChevronRight,
+  Megaphone,
+  Palette,
+  Video,
+  Code2,
+  FileText
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import { useView, ViewType } from '../../context/ViewContext';
+import { useView } from '../../context/ViewContext';
 import { useNavigation } from './NavigationContext';
 import { useModals } from '../../context/ModalsContext';
 import { SidebarCollapseButton } from './SidebarCollapseButton';
@@ -18,29 +25,51 @@ import { SidebarTooltip } from './SidebarTooltip';
 import { SettingsDropdownMenu } from './SettingsDropdownMenu';
 import { PWAInstallButton } from '../../pwa/PWAInstallButton';
 
-export interface NavItemConfig {
-  id: ViewType;
+export interface GroupItemConfig {
+  id: string;
+  groupKey: 'edu' | 'marketing' | 'design' | 'video' | 'dev' | 'cv';
   icon: React.ComponentType<{ className?: string }>;
-  labelKey: keyof typeof import('../../i18n/translations').translations.ar;
-  badge?: string;
+  labelAr: string;
+  labelEn: string;
 }
 
-export const navItems: NavItemConfig[] = [
-  { id: 'dashboard', icon: LayoutDashboard, labelKey: 'dashboard' },
-  { id: 'library', icon: Library, labelKey: 'library' },
-  { id: 'flows', icon: Compass, labelKey: 'flows' },
-  { id: 'playground', icon: FlaskConical, labelKey: 'playground' },
-  { id: 'workflows', icon: GitMerge, labelKey: 'workflows' },
-  { id: 'generator', icon: PenTool, labelKey: 'generator' },
-  { id: 'settings', icon: Settings, labelKey: 'settings' },
+export const SIDEBAR_GROUPS: GroupItemConfig[] = [
+  { id: 'edu', groupKey: 'edu', icon: GraduationCap, labelAr: 'التعليم', labelEn: 'Education' },
+  { id: 'marketing', groupKey: 'marketing', icon: Megaphone, labelAr: 'التسويق', labelEn: 'Marketing' },
+  { id: 'design', groupKey: 'design', icon: Palette, labelAr: 'التصميم', labelEn: 'Design' },
+  { id: 'video', groupKey: 'video', icon: Video, labelAr: 'الفيديو', labelEn: 'Video' },
+  { id: 'dev', groupKey: 'dev', icon: Code2, labelAr: 'البرمجة', labelEn: 'Programming' },
+  { id: 'cv', groupKey: 'cv', icon: FileText, labelAr: 'السيرة الذاتية', labelEn: 'CV & Career' },
 ];
 
 export function SidebarNav() {
-  const { isCollapsed } = useNavigation();
-  const { isSettingsMenuOpen, toggleSettingsMenu, closeSettingsMenu } = useModals();
+  const { isCollapsed, toggleSidebar } = useNavigation();
+  const { isSettingsMenuOpen, toggleSettingsMenu, closeSettingsMenu, openModal, activeModal } = useModals();
   const { t, isArabic } = useLanguage();
   const { view, setView } = useView();
+  const [isGroupsOpen, setIsGroupsOpen] = useState(true);
   const settingsButtonRef = React.useRef<HTMLButtonElement>(null);
+
+  const currentHash = typeof window !== 'undefined' ? window.location.hash : '';
+  const isFavoritesActive = view === 'library' && currentHash.includes('favorites=true');
+  const isLibraryActive = view === 'library' && !currentHash.includes('favorites=true') && !currentHash.includes('group=');
+  const isAcademyActive = view === 'flows';
+  const isDashboardActive = view === 'dashboard';
+  const isFaqActive = activeModal === 'faq';
+
+  const navigateTo = (targetView: 'dashboard' | 'library' | 'flows', hash?: string) => {
+    closeSettingsMenu();
+    if (hash !== undefined) {
+      window.location.hash = hash;
+    }
+    setView(targetView);
+  };
+
+  const navigateToGroup = (groupId: string) => {
+    closeSettingsMenu();
+    window.location.hash = `#library?group=${groupId}`;
+    setView('library');
+  };
 
   return (
     <aside
@@ -58,12 +87,10 @@ export function SidebarNav() {
       {/* Top Brand Header */}
       <div className="flex h-16 items-center px-4 border-b border-border/80 overflow-hidden">
         <div className="flex items-center gap-3 w-full">
-          {/* Brand Icon Logo */}
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shrink-0 shadow-sm">
             <Sparkles className="w-5 h-5" />
           </div>
 
-          {/* App Title & Version (Animated with smooth fade/width transition) */}
           <div
             className={`
               flex flex-col overflow-hidden transition-all duration-300 ease-out whitespace-nowrap
@@ -81,98 +108,298 @@ export function SidebarNav() {
       </div>
 
       {/* Navigation Links Area */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1.5 scrollbar-thin relative" aria-label={t.navMain || 'Main Navigation'}>
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isSettingsItem = item.id === 'settings';
-            const isActive = isSettingsItem ? isSettingsMenuOpen || view === 'settings' : view === item.id;
-            const label = t[item.labelKey];
-
-            const handleClick = () => {
-              if (isSettingsItem) {
-                toggleSettingsMenu();
-              } else {
-                closeSettingsMenu();
-                setView(item.id);
-              }
-            };
-
-            const navItemContent = (
+      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1 scrollbar-thin relative" aria-label={t.navMain || 'Main Navigation'}>
+        {/* 1. الرئيسية (Dashboard) */}
+        <div className="relative">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'الرئيسية' : 'Home'} isVisible={isCollapsed}>
               <button
-                ref={isSettingsItem ? settingsButtonRef : undefined}
                 type="button"
-                onClick={handleClick}
-                aria-current={isActive ? 'page' : undefined}
-                aria-haspopup={isSettingsItem ? 'menu' : undefined}
-                aria-expanded={isSettingsItem ? isSettingsMenuOpen : undefined}
+                onClick={() => navigateTo('dashboard', '')}
+                aria-current={isDashboardActive ? 'page' : undefined}
                 className={`
-                  relative group/item flex items-center w-full rounded-xl transition-all duration-200
+                  relative flex items-center justify-center w-full h-11 rounded-xl transition-all duration-200
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
-                  ${isCollapsed ? 'h-11 justify-center' : 'h-11 px-3 gap-3 justify-start'}
-                  ${isActive 
-                    ? 'bg-primary text-primary-foreground font-semibold shadow-sm' 
-                    : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'
-                  }
+                  ${isDashboardActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
                 `}
               >
-                {/* Active leading accent indicator for high contrast visual anchor */}
-                {isActive && (
-                  <span 
-                    className={`
-                      absolute top-2 bottom-2 w-1 rounded-full bg-white dark:bg-slate-900
-                      ${isArabic ? 'end-1' : 'start-1'}
-                    `} 
-                  />
-                )}
+                <LayoutDashboard className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigateTo('dashboard', '')}
+              aria-current={isDashboardActive ? 'page' : undefined}
+              className={`
+                relative flex items-center w-full h-11 px-3 gap-3 rounded-xl transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isDashboardActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+              `}
+            >
+              <LayoutDashboard className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium truncate">{isArabic ? 'الرئيسية' : 'Home'}</span>
+            </button>
+          )}
+        </div>
 
-                {/* Fixed-size, perfectly centered Icon container */}
-                <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                  <Icon className={`w-5 h-5 transition-transform duration-200 group-hover/item:scale-105 ${isActive ? 'text-primary-foreground' : ''}`} />
+        {/* 2. مكتبة الأوامر (Command Library) */}
+        <div className="relative">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'مكتبة الأوامر' : 'Command Library'} isVisible={isCollapsed}>
+              <button
+                type="button"
+                onClick={() => navigateTo('library', '#library')}
+                aria-current={isLibraryActive ? 'page' : undefined}
+                className={`
+                  relative flex items-center justify-center w-full h-11 rounded-xl transition-all duration-200
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                  ${isLibraryActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+                `}
+              >
+                <Library className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigateTo('library', '#library')}
+              aria-current={isLibraryActive ? 'page' : undefined}
+              className={`
+                relative flex items-center w-full h-11 px-3 gap-3 rounded-xl transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isLibraryActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+              `}
+            >
+              <Library className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium truncate">{isArabic ? 'مكتبة الأوامر' : 'Command Library'}</span>
+            </button>
+          )}
+        </div>
+
+        {/* 3. أكاديمية الأوامر (Command Academy) */}
+        <div className="relative">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'أكاديمية الأوامر' : 'Command Academy'} isVisible={isCollapsed}>
+              <button
+                type="button"
+                onClick={() => navigateTo('flows', '#flows')}
+                aria-current={isAcademyActive ? 'page' : undefined}
+                className={`
+                  relative flex items-center justify-center w-full h-11 rounded-xl transition-all duration-200
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                  ${isAcademyActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+                `}
+              >
+                <GraduationCap className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigateTo('flows', '#flows')}
+              aria-current={isAcademyActive ? 'page' : undefined}
+              className={`
+                relative flex items-center w-full h-11 px-3 gap-3 rounded-xl transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isAcademyActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+              `}
+            >
+              <GraduationCap className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium truncate">{isArabic ? 'أكاديمية الأوامر' : 'Command Academy'}</span>
+            </button>
+          )}
+        </div>
+
+        {/* 4. مكتبتي (My Library / Favorites) */}
+        <div className="relative">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'مكتبتي' : 'My Library'} isVisible={isCollapsed}>
+              <button
+                type="button"
+                onClick={() => navigateTo('library', '#library?favorites=true')}
+                aria-current={isFavoritesActive ? 'page' : undefined}
+                className={`
+                  relative flex items-center justify-center w-full h-11 rounded-xl transition-all duration-200
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                  ${isFavoritesActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+                `}
+              >
+                <Star className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigateTo('library', '#library?favorites=true')}
+              aria-current={isFavoritesActive ? 'page' : undefined}
+              className={`
+                relative flex items-center w-full h-11 px-3 gap-3 rounded-xl transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isFavoritesActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+              `}
+            >
+              <Star className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium truncate">{isArabic ? 'مكتبتي' : 'My Library'}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Divider before Groups */}
+        <div className="pt-2 pb-1">
+          <div className="h-px bg-border/60 mx-2" />
+        </div>
+
+        {/* 5. المجموعات (Collapsible Groups Section) */}
+        <div className="relative space-y-1">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'المجموعات (توسيع)' : 'Groups (Expand)'} isVisible={isCollapsed}>
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                className="relative flex items-center justify-center w-full h-11 rounded-xl text-muted-foreground hover:bg-accent/80 hover:text-foreground transition-all duration-200 cursor-pointer"
+              >
+                <Layers className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <div>
+              {/* Collapsible Section Trigger */}
+              <button
+                type="button"
+                onClick={() => setIsGroupsOpen((prev) => !prev)}
+                className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg cursor-pointer select-none"
+              >
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4" />
+                  <span className="tracking-wide uppercase">{isArabic ? 'المجموعات' : 'Groups'}</span>
                 </div>
-
-                {/* Text Label with smooth width + opacity collapse */}
-                <span
-                  className={`
-                    text-sm truncate transition-all duration-300 ease-out whitespace-nowrap
-                    ${isCollapsed ? 'opacity-0 w-0 overflow-hidden pointer-events-none' : 'opacity-100 flex-1 text-start'}
-                  `}
-                >
-                  {label}
-                </span>
-
-                {/* Badge if present */}
-                {item.badge && !isCollapsed && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-primary-foreground/20 text-primary-foreground">
-                    {item.badge}
-                  </span>
+                {isGroupsOpen ? (
+                  <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200" />
+                ) : (
+                  <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isArabic ? 'rotate-180' : ''}`} />
                 )}
               </button>
-            );
 
-            return (
-              <li key={item.id} className="relative">
-                {isCollapsed ? (
-                  <SidebarTooltip label={label} badge={item.badge} isVisible={isCollapsed && !isSettingsMenuOpen}>
-                    {navItemContent}
-                  </SidebarTooltip>
-                ) : (
-                  navItemContent
-                )}
+              {/* Collapsible Groups Items List */}
+              {isGroupsOpen && (
+                <div className="space-y-0.5 mt-1 ps-2">
+                  {SIDEBAR_GROUPS.map((grp) => {
+                    const GroupIcon = grp.icon;
+                    const isGroupActive = view === 'library' && currentHash.includes(`group=${grp.id}`);
+                    const groupLabel = isArabic ? grp.labelAr : grp.labelEn;
 
-                {/* Sliding Dropdown Menu for Settings */}
-                {isSettingsItem && (
-                  <SettingsDropdownMenu
-                    isOpen={isSettingsMenuOpen}
-                    onClose={closeSettingsMenu}
-                    anchorRef={settingsButtonRef}
-                    position={isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}
-                  />
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                    return (
+                      <button
+                        key={grp.id}
+                        type="button"
+                        onClick={() => navigateToGroup(grp.id)}
+                        className={`
+                          flex items-center w-full h-9 px-3 gap-2.5 rounded-lg text-xs font-medium transition-all duration-150
+                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                          ${isGroupActive 
+                            ? 'bg-primary/15 text-primary font-semibold' 
+                            : 'text-muted-foreground hover:bg-accent/70 hover:text-foreground'
+                          }
+                        `}
+                      >
+                        <GroupIcon className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{groupLabel}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Divider before Settings & Help */}
+        <div className="pt-2 pb-1">
+          <div className="h-px bg-border/60 mx-2" />
+        </div>
+
+        {/* 6. الإعدادات (Settings) */}
+        <div className="relative">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'الإعدادات' : 'Settings'} isVisible={isCollapsed && !isSettingsMenuOpen}>
+              <button
+                ref={settingsButtonRef}
+                type="button"
+                onClick={toggleSettingsMenu}
+                aria-expanded={isSettingsMenuOpen}
+                className={`
+                  relative flex items-center justify-center w-full h-11 rounded-xl transition-all duration-200
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                  ${isSettingsMenuOpen ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+                `}
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <button
+              ref={settingsButtonRef}
+              type="button"
+              onClick={toggleSettingsMenu}
+              aria-expanded={isSettingsMenuOpen}
+              className={`
+                relative flex items-center w-full h-11 px-3 gap-3 rounded-xl transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isSettingsMenuOpen ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+              `}
+            >
+              <Settings className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium truncate">{isArabic ? 'الإعدادات' : 'Settings'}</span>
+            </button>
+          )}
+
+          {/* Sliding Dropdown Menu for Settings */}
+          <SettingsDropdownMenu
+            isOpen={isSettingsMenuOpen}
+            onClose={closeSettingsMenu}
+            anchorRef={settingsButtonRef}
+            position={isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}
+          />
+        </div>
+
+        {/* 7. المساعدة (Help / FAQ Modal) */}
+        <div className="relative">
+          {isCollapsed ? (
+            <SidebarTooltip label={isArabic ? 'المساعدة' : 'Help'} isVisible={isCollapsed}>
+              <button
+                type="button"
+                onClick={() => {
+                  closeSettingsMenu();
+                  openModal('faq');
+                }}
+                className={`
+                  relative flex items-center justify-center w-full h-11 rounded-xl transition-all duration-200
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                  ${isFaqActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+                `}
+              >
+                <HelpCircle className="w-5 h-5" />
+              </button>
+            </SidebarTooltip>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                closeSettingsMenu();
+                openModal('faq');
+              }}
+              className={`
+                relative flex items-center w-full h-11 px-3 gap-3 rounded-xl transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isFaqActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:bg-accent/80 hover:text-foreground'}
+              `}
+            >
+              <HelpCircle className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium truncate">{isArabic ? 'المساعدة' : 'Help'}</span>
+            </button>
+          )}
+        </div>
       </nav>
 
       {/* Bottom Footer Section */}

@@ -5,7 +5,7 @@ import { useDirection } from '../../context/DirectionContext';
 import { useView } from '../../context/ViewContext';
 import { usePrompts } from '../../hooks/usePrompts';
 import { PromptCard } from '../library/PromptCard';
-import { PromptModal } from '../library/PromptModal';
+import { CommandDetailsDrawer } from '../library/CommandDetailsDrawer';
 import { CommandPrompt } from '../../types/prompt';
 
 export function RecentPrompts() {
@@ -66,10 +66,11 @@ export function RecentPrompts() {
           ))}
         </div>
       )}
-      <PromptModal
+      <CommandDetailsDrawer
         prompt={selectedPrompt}
         isOpen={selectedPromptId !== null}
         onClose={() => setSelectedPromptId(null)}
+        onSelectPrompt={setSelectedPromptId}
       />
     </section>
   );

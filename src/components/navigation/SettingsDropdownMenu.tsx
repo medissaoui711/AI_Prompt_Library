@@ -20,7 +20,7 @@ interface SettingsDropdownMenuProps {
   isOpen: boolean;
   onClose: () => void;
   anchorRef?: React.RefObject<HTMLElement | null>;
-  position?: 'sidebar-expanded' | 'sidebar-collapsed' | 'mobile-drawer';
+  position?: 'sidebar-expanded' | 'sidebar-collapsed' | 'mobile-drawer' | 'header-dropdown';
 }
 
 interface MenuItem {
@@ -110,7 +110,14 @@ export function SettingsDropdownMenu({
 
   // Position classes depending on context
   let positionClasses = '';
-  if (position === 'sidebar-collapsed') {
+  if (position === 'header-dropdown') {
+    positionClasses = `
+      absolute top-full mt-2.5 z-50 w-72 sm:w-80 max-w-[calc(100vw-1.5rem)]
+      bg-card text-card-foreground border border-border/90 rounded-2xl shadow-2xl p-2
+      animate-in fade-in slide-in-from-top-2 zoom-in-95 duration-200
+      ${isArabic ? 'left-0' : 'right-0'}
+    `;
+  } else if (position === 'sidebar-collapsed') {
     positionClasses = `
       absolute bottom-2 z-50 w-72 bg-card text-card-foreground
       border border-border/90 rounded-2xl shadow-2xl p-2

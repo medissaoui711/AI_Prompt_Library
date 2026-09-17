@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Star, X, Download } from 'lucide-react';
+import { Search, Star, X, Download, LayoutGrid, Table } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { PromptFilters } from '../../types/prompt';
 import { PROMPT_GROUPS } from '../../data/groups';
@@ -12,10 +12,22 @@ interface Props {
   hasActiveFilters: boolean;
   totalResults: number;
   totalPrompts: number;
+  viewMode?: 'grid' | 'table';
+  onViewModeChange?: (mode: 'grid' | 'table') => void;
 }
 
-export function LibraryToolbar({ filters, setFilters, onClear, onOpenExport, hasActiveFilters, totalResults, totalPrompts }: Props) {
-  const { t } = useLanguage();
+export function LibraryToolbar({
+  filters,
+  setFilters,
+  onClear,
+  onOpenExport,
+  hasActiveFilters,
+  totalResults,
+  totalPrompts,
+  viewMode = 'grid',
+  onViewModeChange,
+}: Props) {
+  const { t, isArabic } = useLanguage();
 
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters(prev => ({ ...prev, query: e.target.value }));
@@ -58,8 +70,40 @@ export function LibraryToolbar({ filters, setFilters, onClear, onOpenExport, has
           )}
         </div>
 
-        {/* Favorites, Export & Sort */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Favorites, Export, View Mode & Sort */}
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          {/* View Mode Toggle (Grid vs Table) */}
+          {onViewModeChange && (
+            <div className="flex items-center bg-muted border border-border rounded-md p-0.5">
+              <button
+                type="button"
+                onClick={() => onViewModeChange('grid')}
+                className={`p-2 rounded-sm transition-colors cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-card text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title={isArabic ? 'عرض كبطاقات' : 'Grid view'}
+                aria-label={isArabic ? 'عرض كبطاقات' : 'Grid view'}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => onViewModeChange('table')}
+                className={`p-2 rounded-sm transition-colors cursor-pointer ${
+                  viewMode === 'table'
+                    ? 'bg-card text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title={isArabic ? 'عرض كجدول' : 'Table view'}
+                aria-label={isArabic ? 'عرض كجدول' : 'Table view'}
+              >
+                <Table className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
           <button
             onClick={() => setFilters(prev => ({ ...prev, onlyFavorites: !prev.onlyFavorites }))}
             className={`flex items-center gap-2 h-10 px-3 rounded-md border text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${

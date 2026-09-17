@@ -6,25 +6,42 @@ import { PromptFilters, CommandPrompt } from '../../types/prompt';
 import { filterPrompts } from '../../utils/promptFilters';
 import { LibraryToolbar } from './LibraryToolbar';
 import { PromptCard } from './PromptCard';
-import { PromptModal } from './PromptModal';
+import { PromptTable } from './PromptTable';
+import { CommandDetailsDrawer } from './CommandDetailsDrawer';
 import { ExportModal } from './ExportModal';
 import { LibraryEmptyState } from './LibraryEmptyState';
 import { EduFilterFlow } from './EduFilterFlow';
+import { ContentFilterFlow } from './ContentFilterFlow';
 import { AdsFilterFlow } from './AdsFilterFlow';
 import { CvFilterFlow } from './CvFilterFlow';
 import { DevFilterFlow } from './DevFilterFlow';
 import { DesignFilterFlow } from './DesignFilterFlow';
 import { PROMPT_GROUPS, TASK_TYPES } from '../../data/groups';
-import { GraduationCap, Palette, Video, FileText, Megaphone, Code2, ChevronLeft, ChevronRight, Sparkles, Filter, Compass } from 'lucide-react';
+import { GraduationCap, Palette, Video, FileText, Megaphone, Code2, PenTool, Search, ChevronLeft, ChevronRight, Sparkles, Filter, Compass } from 'lucide-react';
 
-const iconMap: Record<string, React.ElementType> = {
-  GraduationCap,
-  Megaphone,
-  Palette,
-  Video,
-  FileText,
-  Code2,
-};
+interface CategoryItem {
+  id: string;
+  labelAr: string;
+  labelEn: string;
+  color: string;
+  icon: React.ElementType;
+}
+
+// Strict 2-column mobile layout with 4 balanced rows:
+// صف 1: صناعة المحتوى | تعليمي
+// صف 2: تصميم          | إعلانات تجارية
+// صف 3: برمجة وتطوير   | سيرة ذاتية
+// صف 4: فيديو          | البحث والتحليل
+const ORDERED_CATEGORIES: CategoryItem[] = [
+  { id: 'content', labelAr: 'صناعة المحتوى', labelEn: 'Content Creation', color: 'bg-teal-500/10 text-teal-500', icon: PenTool },
+  { id: 'edu', labelAr: 'تعليمي', labelEn: 'Education', color: 'bg-blue-500/10 text-blue-500', icon: GraduationCap },
+  { id: 'design', labelAr: 'تصميم', labelEn: 'Design', color: 'bg-purple-500/10 text-purple-500', icon: Palette },
+  { id: 'ads', labelAr: 'إعلانات تجارية', labelEn: 'Commercial Ads', color: 'bg-amber-500/10 text-amber-500', icon: Megaphone },
+  { id: 'dev', labelAr: 'برمجة وتطوير', labelEn: 'Dev & Coding', color: 'bg-cyan-500/10 text-cyan-500', icon: Code2 },
+  { id: 'cv', labelAr: 'سيرة ذاتية', labelEn: 'CV & Career', color: 'bg-emerald-500/10 text-emerald-500', icon: FileText },
+  { id: 'video', labelAr: 'فيديو', labelEn: 'Video Production', color: 'bg-red-500/10 text-red-500', icon: Video },
+  { id: 'research', labelAr: 'البحث والتحليل', labelEn: 'Research & Analysis', color: 'bg-indigo-500/10 text-indigo-500', icon: Search },
+];
 
 const ITEMS_PER_PAGE = 24;
 
@@ -48,8 +65,10 @@ export function LibraryView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isResearchActive, setIsResearchActive] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
 
-  // Synchronize initial filter from URL hash e.g. #library?group=edu
+  // Synchronize initial filter from URL hash e.g. #library?group=edu or #library?favorites=true
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash;
@@ -58,17 +77,35 @@ export function LibraryView() {
         const groupParam = queryParams.get('group');
         const searchParam = queryParams.get('q');
         const modalParam = queryParams.get('modal');
+        const favoritesParam = queryParams.get('favorites');
 
-        if (groupParam && ['edu', 'design', 'video', 'cv', 'dev'].includes(groupParam)) {
-          setFilters((prev) => ({ ...prev, groups: [groupParam as any] }));
-          if (groupParam === 'edu') setShowEduExplorer(true);
+        if (favoritesParam === 'true') {
+          setFilters((prev) => ({ ...prev, onlyFavorites: true, groups: [] }));
+          setIsResearchActive(false);
+        } else if (groupParam) {
+          if (groupParam === 'research') {
+            setIsResearchActive(true);
+            setFilters((prev) => ({ ...prev, groups: [], onlyFavorites: false }));
+          } else if (groupParam === 'marketing') {
+            setIsResearchActive(false);
+            setFilters((prev) => ({ ...prev, groups: ['ads', 'content'], onlyFavorites: false }));
+          } else if (['content', 'edu', 'design', 'video', 'cv', 'dev', 'ads'].includes(groupParam)) {
+            setIsResearchActive(false);
+            setFilters((prev) => ({ ...prev, groups: [groupParam as any], onlyFavorites: false }));
+            if (groupParam === 'edu') setShowEduExplorer(true);
+          }
         }
+
         if (searchParam) {
           setFilters((prev) => ({ ...prev, query: searchParam }));
         }
         if (modalParam) {
           setSelectedPromptId(modalParam);
         }
+      } else if (hash === '#library') {
+        // Direct click on Library without filters
+        setIsResearchActive(false);
+        setFilters((prev) => ({ ...prev, groups: [], onlyFavorites: false }));
       }
     };
 
@@ -80,6 +117,18 @@ export function LibraryView() {
   // Filter prompts
   const filteredPrompts = useMemo(() => {
     let result = filterPrompts(prompts, filters);
+
+    if (isResearchActive) {
+      result = result.filter(
+        (p) =>
+          p.task?.includes('research') ||
+          p.subject?.includes('research') ||
+          p.outputType === 'analysis' ||
+          p.keywords?.some((k) =>
+            k.includes('بحث') || k.includes('تحليل') || k.includes('research') || k.includes('analysis')
+          )
+      );
+    }
 
     if (hasEduFilter) {
       if (eduFilter.stage) {
@@ -135,6 +184,7 @@ export function LibraryView() {
       stages: [],
       subjects: [],
       tasks: [],
+      contentCategory: 'all',
       adsCategory: 'all',
       cvCategory: 'all',
       devCategory: 'all',
@@ -142,6 +192,7 @@ export function LibraryView() {
       onlyFavorites: false,
       sortBy: 'recent',
     });
+    setIsResearchActive(false);
     clearEduFilter();
     if (window.location.hash.startsWith('#library?')) {
       window.location.hash = '#library';
@@ -154,12 +205,14 @@ export function LibraryView() {
     filters.stages.length > 0 ||
     filters.subjects.length > 0 ||
     filters.tasks.length > 0 ||
+    (filters.contentCategory && filters.contentCategory !== 'all') ||
     (filters.adsCategory && filters.adsCategory !== 'all') ||
     (filters.cvCategory && filters.cvCategory !== 'all') ||
     (filters.devCategory && filters.devCategory !== 'all') ||
     (filters.designCategory && filters.designCategory !== 'all') ||
     filters.onlyFavorites ||
-    hasEduFilter
+    hasEduFilter ||
+    isResearchActive
   );
 
   const toggleGroup = (groupId: string) => {
@@ -171,6 +224,36 @@ export function LibraryView() {
       if (groupId === 'edu') setShowEduExplorer(true);
       return { ...prev, groups: [groupId as any] };
     });
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    if (categoryId === 'research') {
+      setIsResearchActive((prev) => !prev);
+      return;
+    }
+    toggleGroup(categoryId);
+  };
+
+  const isCategorySelected = (categoryId: string) => {
+    if (categoryId === 'research') {
+      return isResearchActive;
+    }
+    return filters.groups.includes(categoryId as any);
+  };
+
+  const getCategoryCount = (categoryId: string) => {
+    if (categoryId === 'research') {
+      return prompts.filter(
+        (p) =>
+          p.task?.includes('research') ||
+          p.subject?.includes('research') ||
+          p.outputType === 'analysis' ||
+          p.keywords?.some((k) =>
+            k.includes('بحث') || k.includes('تحليل') || k.includes('research') || k.includes('analysis')
+          )
+      ).length;
+    }
+    return prompts.filter((p) => p.group === categoryId).length;
   };
 
   const toggleTask = (taskId: string) => {
@@ -186,53 +269,60 @@ export function LibraryView() {
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-border pb-4 sm:pb-5">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{t.libraryTitle}</h1>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-              {prompts.length} {t.promptsCount}
+              {new Intl.NumberFormat('en-US').format(prompts.length)} {t.promptsCount}
             </span>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">{t.librarySubtitle}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">{t.librarySubtitle}</p>
         </div>
 
-        {/* Total stats breakdown badge */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg border border-border/60">
-          <Sparkles className="h-4 w-4 text-primary shrink-0" />
-          <span>
-            {isArabic
-              ? `${prompts.length} أمر ذكاء اصطناعي تفاعلي موثق ومقسّم حسب التخصص`
-              : `${prompts.length} Verified Interactive AI Prompts across categories`}
-          </span>
+        {/* Clear Stats Card (الرقم أوضح من الوصف) */}
+        <div className="flex items-center gap-3 bg-card border border-border/80 px-4 py-2.5 rounded-xl shadow-xs self-start sm:self-auto">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-base sm:text-lg font-bold text-foreground leading-tight">
+              {new Intl.NumberFormat('en-US').format(prompts.length)} {isArabic ? 'أمرًا منظمًا' : 'Prompts'}
+            </span>
+            <span className="text-[11px] text-muted-foreground font-medium">
+              {isArabic ? 'اكتشف، خصص، وانسخ' : 'Discover, customize, and copy'}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Category Cards Quick Selection */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {PROMPT_GROUPS.map((group) => {
-          const Icon = iconMap[group.icon];
-          const isSelected = filters.groups.includes(group.id as any);
-          const count = prompts.filter((p) => p.group === group.id).length;
+      {/* Category Cards: Strict 2-column on mobile, 4-column on tablet, 8-column on desktop */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2.5 sm:gap-3">
+        {ORDERED_CATEGORIES.map((cat) => {
+          const Icon = cat.icon;
+          const isSelected = isCategorySelected(cat.id);
+          const count = getCategoryCount(cat.id);
+          const label = isArabic ? cat.labelAr : cat.labelEn;
 
           return (
             <button
-              key={group.id}
-              onClick={() => toggleGroup(group.id)}
-              className={`flex items-center gap-3 p-3.5 rounded-xl border text-start transition-all cursor-pointer ${
+              key={cat.id}
+              type="button"
+              onClick={() => toggleCategory(cat.id)}
+              className={`flex items-center gap-2.5 sm:gap-3 p-3 rounded-xl border text-start transition-all cursor-pointer ${
                 isSelected
-                  ? 'border-primary bg-primary/10 shadow-sm ring-1 ring-primary'
+                  ? 'border-primary bg-primary/10 shadow-xs ring-1 ring-primary'
                   : 'border-border bg-card hover:bg-accent hover:border-primary/40'
               }`}
             >
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${group.color}`}>
-                {Icon && <Icon className="h-5 w-5" />}
+              <div className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg ${cat.color}`}>
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div className="flex flex-col min-w-0 flex-1">
-                <span className="text-sm font-semibold text-foreground truncate">
-                  {t[group.labelKey as keyof typeof t]}
+                <span className="text-xs sm:text-sm font-semibold text-foreground truncate">
+                  {label}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-[11px] text-muted-foreground truncate">
                   {count} {t.promptsCount}
                 </span>
               </div>
@@ -240,6 +330,22 @@ export function LibraryView() {
           );
         })}
       </div>
+
+      {/* Content & Copywriting Explorer Banner */}
+      {filters.groups.includes('content') && (
+        <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+          <ContentFilterFlow
+            selectedSubcategory={filters.contentCategory || 'all'}
+            onSelectSubcategory={(subcatId) =>
+              setFilters((prev) => ({ ...prev, contentCategory: subcatId }))
+            }
+            onSelectShortcut={(code) =>
+              setFilters((prev) => ({ ...prev, query: code }))
+            }
+            totalMatches={filteredPrompts.length}
+          />
+        </div>
+      )}
 
       {/* Edu Explorer Banner & Collapse */}
       {(filters.groups.includes('edu') || showEduExplorer) && (
@@ -326,6 +432,8 @@ export function LibraryView() {
         hasActiveFilters={hasActiveFilters}
         totalResults={filteredPrompts.length}
         totalPrompts={prompts.length}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       {/* Secondary Task Filter Chips */}
@@ -360,18 +468,25 @@ export function LibraryView() {
         />
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {paginatedPrompts.map((prompt) => (
-              <PromptCard
-                key={prompt.id}
-                prompt={prompt}
-                onSelect={(id) => setSelectedPromptId(id)}
-                onTry={(id) => {
-                  window.location.hash = `#playground?cmd=${id}`;
-                }}
-              />
-            ))}
-          </div>
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {paginatedPrompts.map((prompt) => (
+                <PromptCard
+                  key={prompt.id}
+                  prompt={prompt}
+                  onSelect={(id) => setSelectedPromptId(id)}
+                  onTry={(id) => {
+                    window.location.hash = `#playground?cmd=${id}`;
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <PromptTable
+              prompts={paginatedPrompts}
+              onSelect={(id) => setSelectedPromptId(id)}
+            />
+          )}
 
           {/* Pagination */}
           {totalPages > 1 && (
@@ -431,15 +546,12 @@ export function LibraryView() {
         </>
       )}
 
-      {/* Prompt Details Modal */}
-      <PromptModal
+      {/* Command Details Drawer */}
+      <CommandDetailsDrawer
         prompt={selectedPrompt}
         isOpen={selectedPromptId !== null}
         onClose={() => setSelectedPromptId(null)}
-        onTry={(id) => {
-          setSelectedPromptId(null);
-          window.location.hash = `#playground?cmd=${id}`;
-        }}
+        onSelectPrompt={(id) => setSelectedPromptId(id)}
       />
 
       {/* Export & Collections Modal */}

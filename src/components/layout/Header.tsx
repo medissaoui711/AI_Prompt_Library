@@ -37,25 +37,18 @@ export function Header({ onMenuClick }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
       <div className="flex items-center gap-3">
-        <button
-          onClick={handleMenuClick}
-          className="inline-flex items-center justify-center rounded-xl p-2 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden cursor-pointer"
-          aria-label={t.menu}
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-
-        {/* Brand Icon for mobile */}
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white md:hidden shadow-sm">
+        {/* Brand Icon */}
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm">
           <Sparkles className="w-4 h-4" />
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold md:hidden">{t.appName}</span>
+          <span className="text-base font-bold text-foreground md:hidden">{t.appName}</span>
           <span className="hidden md:inline-block text-lg font-semibold text-foreground">{pageTitle}</span>
         </div>
       </div>
       
+      {/* System Tools (أدوات النظام) */}
       <div className="flex items-center gap-1.5 sm:gap-2">
         {/* PWA Install Button Header CTA */}
         <PWAInstallButton variant="compact" />
@@ -93,8 +86,8 @@ export function Header({ onMenuClick }: HeaderProps) {
           )}
         </button>
 
-        {/* Header Settings Quick Menu */}
-        <div className="relative">
+        {/* Header Settings Quick Menu (Mobile Only - Desktop has Settings in Sidebar) */}
+        <div className="relative md:hidden">
           <button
             ref={headerSettingsBtnRef}
             onClick={() => setIsHeaderMenuOpen((prev) => !prev)}
@@ -117,7 +110,7 @@ export function Header({ onMenuClick }: HeaderProps) {
             isOpen={isHeaderMenuOpen}
             onClose={() => setIsHeaderMenuOpen(false)}
             anchorRef={headerSettingsBtnRef}
-            position="sidebar-collapsed"
+            position="header-dropdown"
           />
         </div>
       </div>

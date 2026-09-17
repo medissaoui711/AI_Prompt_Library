@@ -1,10 +1,41 @@
 export const PROMPT_GROUPS = [
+  { id: 'content', labelKey: 'groupContent', color: 'bg-teal-500/10 text-teal-500', icon: 'PenTool' },
   { id: 'edu', labelKey: 'groupEdu', color: 'bg-blue-500/10 text-blue-500', icon: 'GraduationCap' },
   { id: 'design', labelKey: 'groupDesign', color: 'bg-purple-500/10 text-purple-500', icon: 'Palette' },
   { id: 'ads', labelKey: 'groupAds', color: 'bg-amber-500/10 text-amber-500', icon: 'Megaphone' },
   { id: 'dev', labelKey: 'groupDev', color: 'bg-cyan-500/10 text-cyan-500', icon: 'Code2' },
   { id: 'cv', labelKey: 'groupCv', color: 'bg-emerald-500/10 text-emerald-500', icon: 'FileText' },
   { id: 'video', labelKey: 'groupVideo', color: 'bg-red-500/10 text-red-500', icon: 'Video' }
+] as const;
+
+export const CONTENT_SUBCATEGORIES = [
+  { id: 'all', labelAr: 'الكل (100 أمر محتوى ونصوص)', labelEn: 'All (100 Content Prompts)', icon: 'Sparkles', count: 100 },
+  { id: 'social', labelAr: 'منشورات وسائل التواصل', labelEn: 'Social Media Posts', icon: 'Share2', count: 10 },
+  { id: 'shortform', labelAr: 'محتوى Reels وTikTok والقصير', labelEn: 'Short-Form & Reels', icon: 'Video', count: 10 },
+  { id: 'linkedin', labelAr: 'محتوى LinkedIn المهني', labelEn: 'Professional & LinkedIn', icon: 'Briefcase', count: 10 },
+  { id: 'human_articles', labelAr: 'مقالات بشرية ومحتوى مواقع', labelEn: 'Human Articles & Web', icon: 'BookOpen', count: 10 },
+  { id: 'seo_articles', labelAr: 'مقالات تسويقية وSEO', labelEn: 'Marketing Articles & SEO', icon: 'Search', count: 10 },
+  { id: 'products_services', labelAr: 'تعريف المنتجات والخدمات', labelEn: 'Products & Services Intro', icon: 'ShoppingBag', count: 10 },
+  { id: 'launch', labelAr: 'إطلاق تطبيق أو منصة جديدة', labelEn: 'App & Platform Launch', icon: 'Rocket', count: 10 },
+  { id: 'brand_stories', labelAr: 'قصص العلامة التجارية والثقة', labelEn: 'Brand Stories & Trust', icon: 'Heart', count: 10 },
+  { id: 'email', labelAr: 'البريد والنشرات الإخبارية', labelEn: 'Email & Newsletters', icon: 'Mail', count: 8 },
+  { id: 'calendar_plans', labelAr: 'خطط المحتوى والتقويم', labelEn: 'Content Plans & Calendar', icon: 'Calendar', count: 8 },
+  { id: 'review_humanize', labelAr: 'مراجعة وتحسين النصوص', labelEn: 'Review & Humanize', icon: 'CheckCircle2', count: 4 },
+] as const;
+
+export const CONTENT_STARTER_SHORTCUTS = [
+  { labelAr: 'منشور تواصل اجتماعي', labelEn: 'Social Post', code: '/social post', id: 'cnt-soc-001' },
+  { labelAr: 'منشور إنستغرام جذاب', labelEn: 'Instagram Post', code: '/instagram post', id: 'cnt-soc-002' },
+  { labelAr: 'كابشن ريلز وفيديو', labelEn: 'Reel Caption', code: '/reel caption', id: 'cnt-shrt-011' },
+  { labelAr: 'منشور لينكدإن مهني', labelEn: 'LinkedIn Post', code: '/linkedin post', id: 'cnt-soc-005' },
+  { labelAr: 'مقال بشري متعمق', labelEn: 'Human Article', code: '/human article', id: 'cnt-art-031' },
+  { labelAr: 'مقال تسويقي متوافق SEO', labelEn: 'SEO Article', code: '/seo article', id: 'cnt-seo-041' },
+  { labelAr: 'منشور إطلاق منتج', labelEn: 'Product Launch', code: '/product launch post', id: 'cnt-prod-051' },
+  { labelAr: 'إطلاق تطبيق جديد', labelEn: 'App Launch', code: '/app launch', id: 'cnt-lnch-061' },
+  { labelAr: 'إطلاق منصة جديدة', labelEn: 'Platform Launch', code: '/platform launch', id: 'cnt-lnch-062' },
+  { labelAr: 'قصة العلامة التجارية', labelEn: 'Brand Story', code: '/brand story', id: 'cnt-brnd-071' },
+  { labelAr: 'تقويم وخطة محتوى', labelEn: 'Content Calendar', code: '/content calendar', id: 'cnt-plan-089' },
+  { labelAr: 'مراجعة وتدقيق محتوى', labelEn: 'Content Review', code: '/content review', id: 'cnt-rev-099' },
 ] as const;
 
 export const DESIGN_SUBCATEGORIES = [

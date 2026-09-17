@@ -97,6 +97,10 @@ export function filterPrompts(prompts: CommandPrompt[], filters: PromptFilters):
     result = result.filter(p => p.designCategory === filters.designCategory);
   }
 
+  if (filters.contentCategory && filters.contentCategory !== 'all') {
+    result = result.filter(p => p.contentCategory === filters.contentCategory);
+  }
+
   if (filters.query) {
     result = result.filter(p => matchesQuery(p, filters.query));
   }

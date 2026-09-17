@@ -7,22 +7,29 @@ import {
   Globe, 
   AlignLeft, 
   AlignRight, 
-  ChevronLeft, 
-  ChevronRight,
   ChevronDown,
   ChevronUp,
+  LayoutDashboard,
+  Library,
+  GraduationCap,
+  Star,
+  Layers,
   Settings,
   ShieldCheck,
   FileText,
-  HelpCircle
+  HelpCircle,
+  Megaphone,
+  Palette,
+  Video,
+  Code2
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useDirection } from '../../context/DirectionContext';
-import { useView, ViewType } from '../../context/ViewContext';
+import { useView } from '../../context/ViewContext';
 import { useNavigation } from './NavigationContext';
 import { useModals, ModalType } from '../../context/ModalsContext';
-import { navItems } from './SidebarNav';
+import { SIDEBAR_GROUPS } from './SidebarNav';
 import { PWAInstallButton } from '../../pwa/PWAInstallButton';
 
 export function MobileDrawer() {
@@ -33,6 +40,7 @@ export function MobileDrawer() {
   const { dir, toggleDir } = useDirection();
   const { view, setView } = useView();
   const [isMobileSettingsSubmenuOpen, setIsMobileSettingsSubmenuOpen] = useState(false);
+  const [isMobileGroupsOpen, setIsMobileGroupsOpen] = useState(true);
 
   // Close on escape key
   useEffect(() => {
@@ -58,12 +66,23 @@ export function MobileDrawer() {
     };
   }, [isMobileDrawerOpen]);
 
-  const handleItemClick = (id: ViewType) => {
-    if (id === 'settings') {
-      setIsMobileSettingsSubmenuOpen((prev) => !prev);
-      return;
+  const currentHash = typeof window !== 'undefined' ? window.location.hash : '';
+  const isDashboardActive = view === 'dashboard';
+  const isLibraryActive = view === 'library' && !currentHash.includes('favorites=true') && !currentHash.includes('group=');
+  const isAcademyActive = view === 'flows';
+  const isFavoritesActive = view === 'library' && currentHash.includes('favorites=true');
+
+  const navigateTo = (targetView: 'dashboard' | 'library' | 'flows', hash?: string) => {
+    if (hash !== undefined) {
+      window.location.hash = hash;
     }
-    setView(id);
+    setView(targetView);
+    closeMobileDrawer();
+  };
+
+  const navigateToGroup = (groupId: string) => {
+    window.location.hash = `#library?group=${groupId}`;
+    setView('library');
     closeMobileDrawer();
   };
 
@@ -127,112 +146,220 @@ export function MobileDrawer() {
         </div>
 
         {/* Drawer Navigation List */}
-        <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1.5 scrollbar-thin" aria-label={t.menu}>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isSettingsItem = item.id === 'settings';
-            const isActive = isSettingsItem ? isMobileSettingsSubmenuOpen : view === item.id;
-            const label = t[item.labelKey];
+        <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1 scrollbar-thin" aria-label={t.menu}>
+          {/* 1. الرئيسية */}
+          <button
+            type="button"
+            onClick={() => navigateTo('dashboard', '')}
+            aria-current={isDashboardActive ? 'page' : undefined}
+            className={`
+              flex items-center gap-3 w-full h-11 px-3.5 rounded-xl text-sm font-medium transition-all duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+              ${isDashboardActive
+                ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+              }
+            `}
+          >
+            <LayoutDashboard className="w-5 h-5 shrink-0" />
+            <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
+          </button>
 
-            return (
-              <div key={item.id} className="space-y-1">
+          {/* 2. مكتبة الأوامر */}
+          <button
+            type="button"
+            onClick={() => navigateTo('library', '#library')}
+            aria-current={isLibraryActive ? 'page' : undefined}
+            className={`
+              flex items-center gap-3 w-full h-11 px-3.5 rounded-xl text-sm font-medium transition-all duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+              ${isLibraryActive
+                ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+              }
+            `}
+          >
+            <Library className="w-5 h-5 shrink-0" />
+            <span>{isArabic ? 'مكتبة الأوامر' : 'Command Library'}</span>
+          </button>
+
+          {/* 3. أكاديمية الأوامر */}
+          <button
+            type="button"
+            onClick={() => navigateTo('flows', '#flows')}
+            aria-current={isAcademyActive ? 'page' : undefined}
+            className={`
+              flex items-center gap-3 w-full h-11 px-3.5 rounded-xl text-sm font-medium transition-all duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+              ${isAcademyActive
+                ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+              }
+            `}
+          >
+            <GraduationCap className="w-5 h-5 shrink-0" />
+            <span>{isArabic ? 'أكاديمية الأوامر' : 'Command Academy'}</span>
+          </button>
+
+          {/* 4. مكتبتي */}
+          <button
+            type="button"
+            onClick={() => navigateTo('library', '#library?favorites=true')}
+            aria-current={isFavoritesActive ? 'page' : undefined}
+            className={`
+              flex items-center gap-3 w-full h-11 px-3.5 rounded-xl text-sm font-medium transition-all duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+              ${isFavoritesActive
+                ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+              }
+            `}
+          >
+            <Star className="w-5 h-5 shrink-0" />
+            <span>{isArabic ? 'مكتبتي' : 'My Library'}</span>
+          </button>
+
+          {/* Divider before Groups */}
+          <div className="pt-2 pb-1">
+            <div className="h-px bg-border/60 mx-2" />
+          </div>
+
+          {/* 5. المجموعات (Collapsible section) */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsMobileGroupsOpen((prev) => !prev)}
+              className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                <span className="tracking-wide uppercase">{isArabic ? 'المجموعات' : 'Groups'}</span>
+              </div>
+              {isMobileGroupsOpen ? (
+                <ChevronUp className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            {isMobileGroupsOpen && (
+              <div className="space-y-1 mt-1 ps-2">
+                {SIDEBAR_GROUPS.map((grp) => {
+                  const GroupIcon = grp.icon;
+                  const isGroupActive = view === 'library' && currentHash.includes(`group=${grp.id}`);
+                  const groupLabel = isArabic ? grp.labelAr : grp.labelEn;
+
+                  return (
+                    <button
+                      key={grp.id}
+                      type="button"
+                      onClick={() => navigateToGroup(grp.id)}
+                      className={`
+                        flex items-center w-full h-10 px-3 gap-3 rounded-lg text-xs font-medium transition-all duration-150
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                        ${isGroupActive 
+                          ? 'bg-primary/15 text-primary font-semibold' 
+                          : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+                        }
+                      `}
+                    >
+                      <GroupIcon className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{groupLabel}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Divider before Settings & Help */}
+          <div className="pt-2 pb-1">
+            <div className="h-px bg-border/60 mx-2" />
+          </div>
+
+          {/* 6. الإعدادات (Settings) */}
+          <div className="space-y-1">
+            <button
+              type="button"
+              onClick={() => setIsMobileSettingsSubmenuOpen((prev) => !prev)}
+              aria-expanded={isMobileSettingsSubmenuOpen}
+              className={`
+                flex items-center justify-between w-full h-11 px-3.5 rounded-xl text-sm font-medium transition-all duration-200
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
+                ${isMobileSettingsSubmenuOpen
+                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+                }
+              `}
+            >
+              <div className="flex items-center gap-3">
+                <Settings className="w-5 h-5 shrink-0" />
+                <span>{isArabic ? 'الإعدادات' : 'Settings'}</span>
+              </div>
+              {isMobileSettingsSubmenuOpen ? (
+                <ChevronUp className="w-4 h-4 opacity-70" />
+              ) : (
+                <ChevronDown className="w-4 h-4 opacity-70" />
+              )}
+            </button>
+
+            {/* Submenu for Settings */}
+            {isMobileSettingsSubmenuOpen && (
+              <div className="ps-4 pe-1 py-1 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
                 <button
                   type="button"
-                  onClick={() => handleItemClick(item.id)}
-                  aria-current={isActive && !isSettingsItem ? 'page' : undefined}
-                  aria-expanded={isSettingsItem ? isMobileSettingsSubmenuOpen : undefined}
-                  className={`
-                    flex items-center justify-between w-full h-12 px-3.5 rounded-xl text-sm font-medium transition-all duration-200
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer
-                    ${isActive
-                      ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                      : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
-                    }
-                  `}
+                  onClick={() => handleModalClick('settings')}
+                  className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className={`w-6 h-6 flex items-center justify-center ${isActive ? 'text-primary-foreground' : 'text-foreground/70'}`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span>{label}</span>
+                  <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+                    <Settings className="w-3.5 h-3.5" />
                   </div>
-
-                  {isSettingsItem ? (
-                    isMobileSettingsSubmenuOpen ? (
-                      <ChevronUp className="w-4 h-4 opacity-70" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 opacity-70" />
-                    )
-                  ) : isArabic ? (
-                    <ChevronLeft className="w-4 h-4 opacity-40" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 opacity-40" />
-                  )}
+                  <div className="flex-1 truncate">
+                    <div className="truncate">{t.settingsOptionSettings}</div>
+                    <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionSettingsDesc}</div>
+                  </div>
                 </button>
 
-                {/* Submenu for Settings */}
-                {isSettingsItem && isMobileSettingsSubmenuOpen && (
-                  <div className="ps-4 pe-1 py-1 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <button
-                      type="button"
-                      onClick={() => handleModalClick('settings')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
-                        <Settings className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="flex-1 truncate">
-                        <div className="truncate">{t.settingsOptionSettings}</div>
-                        <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionSettingsDesc}</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleModalClick('privacy')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="flex-1 truncate">
-                        <div className="truncate">{t.settingsOptionPrivacy}</div>
-                        <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionPrivacyDesc}</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleModalClick('terms')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
-                        <FileText className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="flex-1 truncate">
-                        <div className="truncate">{t.settingsOptionTerms}</div>
-                        <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionTermsDesc}</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleModalClick('faq')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
-                        <HelpCircle className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="flex-1 truncate">
-                        <div className="truncate">{t.settingsOptionFAQ}</div>
-                        <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionFAQDesc}</div>
-                      </div>
-                    </button>
+                <button
+                  type="button"
+                  onClick={() => handleModalClick('privacy')}
+                  className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5" />
                   </div>
-                )}
+                  <div className="flex-1 truncate">
+                    <div className="truncate">{t.settingsOptionPrivacy}</div>
+                    <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionPrivacyDesc}</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleModalClick('terms')}
+                  className="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/70 transition-colors text-start cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
+                    <FileText className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="flex-1 truncate">
+                    <div className="truncate">{t.settingsOptionTerms}</div>
+                    <div className="text-[10px] text-muted-foreground font-normal truncate">{t.settingsOptionTermsDesc}</div>
+                  </div>
+                </button>
               </div>
-            );
-          })}
+            )}
+          </div>
+
+          {/* 7. المساعدة (Help) */}
+          <button
+            type="button"
+            onClick={() => handleModalClick('faq')}
+            className="flex items-center gap-3 w-full h-11 px-3.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-all duration-200 cursor-pointer"
+          >
+            <HelpCircle className="w-5 h-5 shrink-0" />
+            <span>{isArabic ? 'المساعدة' : 'Help'}</span>
+          </button>
         </nav>
 
         {/* Quick Settings & Utility Controls in Mobile Drawer */}

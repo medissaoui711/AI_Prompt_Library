@@ -9,9 +9,11 @@ import { EDU_UNI_LECTURER } from './university/lecturer';
 import { EDU_UNI_STUDENT_EXTRA } from './university/student-extra';
 import { EDU_VISUAL_ACTIVITIES_PROMPTS } from './visual-activities';
 import { KIDS_VISUAL_ACTIVITIES_PROMPTS } from './kids';
+import { TEACHER_COMMAND_PROMPTS } from './teacher';
 import { getEduMetadata } from '../../metadata/eduMetadataMap';
 
 const RAW_EDU_PROMPTS: CommandPrompt[] = [
+  ...TEACHER_COMMAND_PROMPTS,
   ...KIDS_VISUAL_ACTIVITIES_PROMPTS,
   ...EDU_VISUAL_ACTIVITIES_PROMPTS,
   ...EDU_PRIMARY_PROMPTS,

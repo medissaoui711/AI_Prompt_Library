@@ -101,6 +101,18 @@ export function filterPrompts(prompts: CommandPrompt[], filters: PromptFilters):
     result = result.filter(p => p.contentCategory === filters.contentCategory);
   }
 
+  if (filters.businessCategory && filters.businessCategory !== 'all') {
+    result = result.filter(p => p.businessCategory === filters.businessCategory);
+  }
+
+  if (filters.salesCategory && filters.salesCategory !== 'all') {
+    result = result.filter(p => p.salesCategory === filters.salesCategory);
+  }
+
+  if (filters.eduCategory && filters.eduCategory !== 'all') {
+    result = result.filter(p => p.eduCategory === filters.eduCategory);
+  }
+
   if (filters.query) {
     result = result.filter(p => matchesQuery(p, filters.query));
   }

@@ -1,4 +1,6 @@
 export const PROMPT_GROUPS = [
+  { id: 'sales', labelKey: 'groupSales', color: 'bg-emerald-500/10 text-emerald-600', icon: 'TrendingUp' },
+  { id: 'business', labelKey: 'groupBusiness', color: 'bg-indigo-500/10 text-indigo-500', icon: 'Briefcase' },
   { id: 'content', labelKey: 'groupContent', color: 'bg-teal-500/10 text-teal-500', icon: 'PenTool' },
   { id: 'edu', labelKey: 'groupEdu', color: 'bg-blue-500/10 text-blue-500', icon: 'GraduationCap' },
   { id: 'design', labelKey: 'groupDesign', color: 'bg-purple-500/10 text-purple-500', icon: 'Palette' },
@@ -6,6 +8,69 @@ export const PROMPT_GROUPS = [
   { id: 'dev', labelKey: 'groupDev', color: 'bg-cyan-500/10 text-cyan-500', icon: 'Code2' },
   { id: 'cv', labelKey: 'groupCv', color: 'bg-emerald-500/10 text-emerald-500', icon: 'FileText' },
   { id: 'video', labelKey: 'groupVideo', color: 'bg-red-500/10 text-red-500', icon: 'Video' }
+] as const;
+
+export const SALES_SUBCATEGORIES = [
+  { id: 'all', labelAr: 'الكل (100 أمر مبيعات وإدارة عملاء)', labelEn: 'All (100 Sales Prompts)', icon: 'Sparkles', count: 100 },
+  { id: 'strategy', labelAr: 'استراتيجية وتأهيل العملاء', labelEn: 'Strategy & Qualification', icon: 'Target', count: 10 },
+  { id: 'outreach', labelAr: 'الوصول وبدء التواصل', labelEn: 'Cold Outreach & First Touch', icon: 'Send', count: 10 },
+  { id: 'calls', labelAr: 'المكالمات والاجتماعات البيعية', labelEn: 'Discovery Calls & Meetings', icon: 'PhoneCall', count: 10 },
+  { id: 'proposals', labelAr: 'عروض الأسعار والمقترحات', labelEn: 'Proposals & Pricing', icon: 'FileText', count: 10 },
+  { id: 'objections', labelAr: 'معالجة الاعتراضات والمخاوف', labelEn: 'Objection Handling', icon: 'ShieldAlert', count: 10 },
+  { id: 'followup', labelAr: 'المتابعة الذكية واستعادة الردود', labelEn: 'Follow-Up & Anti-Ghosting', icon: 'RotateCcw', count: 10 },
+  { id: 'closing', labelAr: 'إغلاق الصفقات والتفاوض', labelEn: 'Closing & Negotiation', icon: 'CheckCircle2', count: 10 },
+  { id: 'retention', labelAr: 'رعاية وتوسيع الحسابات', labelEn: 'Retention & Expansion', icon: 'Users', count: 10 },
+  { id: 'crm', labelAr: 'تقارير وإدارة الـ CRM', labelEn: 'CRM, Pipeline & Metrics', icon: 'LayoutDashboard', count: 10 },
+  { id: 'training', labelAr: 'تدريب ومحاكاة المبيعات', labelEn: 'Training & Roleplay', icon: 'GraduationCap', count: 10 },
+] as const;
+
+export const SALES_STARTER_SHORTCUTS = [
+  { labelAr: 'تأهيل العميل المحتمل', labelEn: 'Qualify Lead', code: '/qualify lead', id: 'sal-strat-002' },
+  { labelAr: 'رسالة وصول أولى', labelEn: 'Cold Outreach', code: '/cold outreach', id: 'sal-out-011' },
+  { labelAr: 'افتتاحية واتساب بيعية', labelEn: 'WhatsApp Opener', code: '/whatsapp opener', id: 'sal-out-013' },
+  { labelAr: 'سكربت مكالمة اكتشاف', labelEn: 'Discovery Call', code: '/discovery call script', id: 'sal-call-021' },
+  { labelAr: 'عرض سعر مقنع', labelEn: 'Sales Proposal', code: '/sales proposal', id: 'sal-prop-031' },
+  { labelAr: 'الرد على السعر مرتفع', labelEn: 'Price Objection', code: '/price objection', id: 'sal-obj-041' },
+  { labelAr: 'متابعة بعد عدم الرد', labelEn: 'Anti-Ghosting', code: '/no response follow up', id: 'sal-fol-052' },
+  { labelAr: 'أسئلة إغلاق طبيعية', labelEn: 'Closing Questions', code: '/closing question', id: 'sal-close-061' },
+  { labelAr: 'الرد على طلب الخصم', labelEn: 'Discount Response', code: '/discount response', id: 'sal-close-065' },
+  { labelAr: 'ترقية عميل حالي (Upsell)', labelEn: 'Upsell Client', code: '/upsell client', id: 'sal-ret-075' },
+  { labelAr: 'دليل وموسوعة المبيعات', labelEn: 'Sales Playbook', code: '/sales playbook', id: 'sal-crm-090' },
+  { labelAr: 'محاكاة مكالمة مبيعات', labelEn: 'Sales Roleplay', code: '/sales roleplay', id: 'sal-trn-091' },
+] as const;
+
+
+export const BUSINESS_SUBCATEGORIES = [
+  { id: 'all', labelAr: 'الكل (116 أمر أعمال وبيانات)', labelEn: 'All (116 Business & Data Prompts)', icon: 'Sparkles', count: 116 },
+  { id: 'feasibility', labelAr: 'دراسة الجدوى', labelEn: 'Feasibility Study', icon: 'Target', count: 10 },
+  { id: 'model', labelAr: 'نموذج العمل التجاري', labelEn: 'Business Model', icon: 'Layers', count: 10 },
+  { id: 'market', labelAr: 'أبحاث السوق والعملاء', labelEn: 'Market & Customer Research', icon: 'Users', count: 10 },
+  { id: 'competitors', labelAr: 'تحليل المنافسين', labelEn: 'Competitor Analysis', icon: 'Crosshair', count: 10 },
+  { id: 'launch', labelAr: 'خطة إطلاق المشروع', labelEn: 'Project Launch Plan', icon: 'Rocket', count: 10 },
+  { id: 'growth', labelAr: 'خطة نمو المشروع', labelEn: 'Growth Plan', icon: 'TrendingUp', count: 10 },
+  { id: 'financial', labelAr: 'التخطيط المالي وKPI', labelEn: 'Financial Planning & KPIs', icon: 'DollarSign', count: 10 },
+  { id: 'data_analysis', labelAr: 'تحليل البيانات وExcel وCSV', labelEn: 'Data Analysis & CSV/Excel', icon: 'Table', count: 16 },
+  { id: 'reports', labelAr: 'التقارير ولوحات التحكم', labelEn: 'Reports & Dashboards', icon: 'LayoutDashboard', count: 10 },
+  { id: 'visualization', labelAr: 'تحويل البيانات إلى رسوم بيانية', labelEn: 'Data Visualization & Charts', icon: 'BarChart3', count: 12 },
+  { id: 'decisions', labelAr: 'اتخاذ القرار والتوصيات', labelEn: 'Decisions & Recommendations', icon: 'CheckCircle2', count: 8 },
+] as const;
+
+export const BUSINESS_STARTER_SHORTCUTS = [
+  { labelAr: 'دراسة جدوى شاملة', labelEn: 'Feasibility Study', code: '/feasibility study', id: 'biz-feas-001' },
+  { labelAr: 'مخطط نموذج العمل', labelEn: 'Business Model Canvas', code: '/business model canvas', id: 'biz-mod-012' },
+  { labelAr: 'خطة أبحاث السوق', labelEn: 'Market Research', code: '/market research', id: 'biz-mkt-021' },
+  { labelAr: 'تحليل المنافسين', labelEn: 'Competitor Analysis', code: '/competitor analysis', id: 'biz-comp-031' },
+  { labelAr: 'خطة إطلاق المشروع', labelEn: 'Launch Plan', code: '/launch plan', id: 'biz-lnch-041' },
+  { labelAr: 'خطة نمو متسارعة', labelEn: 'Growth Plan', code: '/growth plan', id: 'biz-gro-051' },
+  { labelAr: 'النموذج المالي الأولي', labelEn: 'Financial Model', code: '/financial model', id: 'biz-fin-061' },
+  { labelAr: 'تحليل ملف البيانات', labelEn: 'Data Analysis', code: '/data analysis', id: 'biz-dat-071' },
+  { labelAr: 'تحليل ملف Excel', labelEn: 'Excel Analysis', code: '/excel analysis', id: 'biz-dat-072' },
+  { labelAr: 'تنظيف ومعالجة البيانات', labelEn: 'Data Cleaning', code: '/data cleaning', id: 'biz-dat-075' },
+  { labelAr: 'تحليل الاتجاه والموسمية', labelEn: 'Trend Analysis', code: '/trend analysis', id: 'biz-dat-082' },
+  { labelAr: 'تقرير تنفيذي للأعمال', labelEn: 'Data Report', code: '/data report', id: 'biz-rep-087' },
+  { labelAr: 'تصميم لوحة التحكم', labelEn: 'Dashboard Design', code: '/dashboard design', id: 'biz-rep-093' },
+  { labelAr: 'توصية الرسوم البيانية', labelEn: 'Chart Recommendation', code: '/chart recommendation', id: 'biz-vis-097' },
+  { labelAr: 'اتخاذ قرار استثماري', labelEn: 'Business Decision', code: '/business decision', id: 'biz-dec-109' },
 ] as const;
 
 export const CONTENT_SUBCATEGORIES = [
@@ -150,6 +215,37 @@ export const CV_STARTER_SHORTCUTS = [
   { labelAr: 'فحص التوافق ATS', labelEn: 'ATS Check', code: '/ats check', id: 'cv-rev-042' },
   { labelAr: 'تفاوض على الراتب', labelEn: 'Salary Negotiation', code: '/salary negotiation', id: 'cv-car-076' },
   { labelAr: 'خطة أول 90 يوم', labelEn: '90-Day Plan', code: '/onboarding 90 day plan', id: 'cv-adv-100' },
+] as const;
+
+export const EDU_TEACHER_SUBCATEGORIES = [
+  { id: 'all', labelAr: 'الكل (95 أمراً لنظام أوامر المعلم)', labelEn: 'All (95 Teacher Commands)', icon: 'Sparkles', count: 95 },
+  { id: 'planning', labelAr: 'التخطيط السنوي والوحدات', labelEn: 'Curriculum & Unit Planning', icon: 'Calendar', count: 12 },
+  { id: 'daily_prep', labelAr: 'التحضير اليومي للحصص', labelEn: 'Daily Lesson Prep', icon: 'FileText', count: 12 },
+  { id: 'assessment', labelAr: 'التقييم والتشخيص', labelEn: 'Assessment & Diagnostics', icon: 'CheckSquare', count: 11 },
+  { id: 'worksheets', labelAr: 'التمارين والكرّاسات', labelEn: 'Worksheets & Workbooks', icon: 'FileSpreadsheet', count: 12 },
+  { id: 'visual_activities', labelAr: 'الجرائد والأنشطة المرئية', labelEn: 'Newspapers & Visuals', icon: 'Newspaper', count: 9 },
+  { id: 'differentiation', labelAr: 'التفريق والدعم العلاجي', labelEn: 'Differentiation & Support', icon: 'Heart', count: 8 },
+  { id: 'classroom_mgmt', labelAr: 'إدارة القسم والتواصل', labelEn: 'Classroom & Parents', icon: 'Users', count: 8 },
+  { id: 'languages', labelAr: 'الفرنسية واللغات', labelEn: 'French & Languages', icon: 'Globe', count: 5 },
+  { id: 'stem', labelAr: 'العلوم والرياضيات', labelEn: 'STEM: Math & Science', icon: 'Calculator', count: 5 },
+  { id: 'documentation', labelAr: 'ملفات المعلم والتوثيق', labelEn: 'Teacher Dossiers', icon: 'Briefcase', count: 7 },
+  { id: 'reports', labelAr: 'التقارير والمراجعة', labelEn: 'Reports & Audits', icon: 'BarChart2', count: 6 },
+] as const;
+
+export const EDU_TEACHER_STARTER_SHORTCUTS = [
+  { labelAr: 'خطة الوحدة التعلمية', labelEn: 'Unit Plan', code: '/unit plan', id: 'edu-tch-001' },
+  { labelAr: 'تحضير الدرس اليومي', labelEn: 'Daily Lesson', code: '/daily lesson', id: 'edu-tch-013' },
+  { labelAr: 'جذاذة درس تفصيلية', labelEn: 'Lesson Card', code: '/lesson card', id: 'edu-tch-014' },
+  { labelAr: 'رائز تشخيصي قبلي', labelEn: 'Diagnostic Test', code: '/diagnostic test', id: 'edu-tch-025' },
+  { labelAr: 'شبكة ومعايير تقييم (Rubric)', labelEn: 'Assessment Rubric', code: '/assessment rubric', id: 'edu-tch-028' },
+  { labelAr: 'ورقة عمل متمايزة (3 مستويات)', labelEn: 'Differentiated Worksheet', code: '/differentiated worksheet', id: 'edu-tch-034' },
+  { labelAr: 'جريدة الدرس A4', labelEn: 'Lesson Newspaper', code: '/lesson newspaper', id: 'edu-tch-048' },
+  { labelAr: 'خطة دعم واستدراك', labelEn: 'Support Lesson', code: '/support lesson', id: 'edu-tch-057' },
+  { labelAr: 'رسالة لأولياء الأمور', labelEn: 'Parent Message', code: '/parent message', id: 'edu-tch-067' },
+  { labelAr: 'ورقة تمارين فرنسية', labelEn: 'French Worksheet', code: '/french worksheet', id: 'edu-tch-041' },
+  { labelAr: 'مسائل رياضيات واقعية', labelEn: 'Math Problem Set', code: '/math problem set', id: 'edu-tch-078' },
+  { labelAr: 'ملف زيارة المفتش', labelEn: 'Visit Prep', code: '/visit prep', id: 'edu-tch-084' },
+  { labelAr: 'تقرير الأداء الإحصائي', labelEn: 'Performance Report', code: '/class performance report', id: 'edu-tch-090' },
 ] as const;
 
 export const EDU_STAGES = [

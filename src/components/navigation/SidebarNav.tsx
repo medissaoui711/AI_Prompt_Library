@@ -14,7 +14,9 @@ import {
   Palette,
   Video,
   Code2,
-  FileText
+  FileText,
+  TrendingUp,
+  Briefcase
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useView } from '../../context/ViewContext';
@@ -27,13 +29,15 @@ import { PWAInstallButton } from '../../pwa/PWAInstallButton';
 
 export interface GroupItemConfig {
   id: string;
-  groupKey: 'edu' | 'marketing' | 'design' | 'video' | 'dev' | 'cv';
+  groupKey: 'sales' | 'business' | 'edu' | 'marketing' | 'design' | 'video' | 'dev' | 'cv';
   icon: React.ComponentType<{ className?: string }>;
   labelAr: string;
   labelEn: string;
 }
 
 export const SIDEBAR_GROUPS: GroupItemConfig[] = [
+  { id: 'sales', groupKey: 'sales', icon: TrendingUp, labelAr: 'المبيعات والعملاء', labelEn: 'Sales & Leads' },
+  { id: 'business', groupKey: 'business', icon: Briefcase, labelAr: 'الأعمال والبيانات', labelEn: 'Business & Startup' },
   { id: 'edu', groupKey: 'edu', icon: GraduationCap, labelAr: 'التعليم', labelEn: 'Education' },
   { id: 'marketing', groupKey: 'marketing', icon: Megaphone, labelAr: 'التسويق', labelEn: 'Marketing' },
   { id: 'design', groupKey: 'design', icon: Palette, labelAr: 'التصميم', labelEn: 'Design' },

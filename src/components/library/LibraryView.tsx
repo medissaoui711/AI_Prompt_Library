@@ -13,11 +13,13 @@ import { LibraryEmptyState } from './LibraryEmptyState';
 import { EduFilterFlow } from './EduFilterFlow';
 import { ContentFilterFlow } from './ContentFilterFlow';
 import { AdsFilterFlow } from './AdsFilterFlow';
+import { BusinessFilterFlow } from './BusinessFilterFlow';
 import { CvFilterFlow } from './CvFilterFlow';
 import { DevFilterFlow } from './DevFilterFlow';
 import { DesignFilterFlow } from './DesignFilterFlow';
+import { SalesFilterFlow } from './SalesFilterFlow';
 import { PROMPT_GROUPS, TASK_TYPES } from '../../data/groups';
-import { GraduationCap, Palette, Video, FileText, Megaphone, Code2, PenTool, Search, ChevronLeft, ChevronRight, Sparkles, Filter, Compass } from 'lucide-react';
+import { Briefcase, GraduationCap, Palette, Video, FileText, Megaphone, Code2, PenTool, Search, ChevronLeft, ChevronRight, Sparkles, Filter, Compass, TrendingUp } from 'lucide-react';
 
 interface CategoryItem {
   id: string;
@@ -27,12 +29,9 @@ interface CategoryItem {
   icon: React.ElementType;
 }
 
-// Strict 2-column mobile layout with 4 balanced rows:
-// صف 1: صناعة المحتوى | تعليمي
-// صف 2: تصميم          | إعلانات تجارية
-// صف 3: برمجة وتطوير   | سيرة ذاتية
-// صف 4: فيديو          | البحث والتحليل
 const ORDERED_CATEGORIES: CategoryItem[] = [
+  { id: 'sales', labelAr: 'مبيعات وعملاء', labelEn: 'Sales & Leads', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400', icon: TrendingUp },
+  { id: 'business', labelAr: 'بيزنس وريادة أعمال', labelEn: 'Business & Startup', color: 'bg-blue-600/10 text-blue-600 dark:text-blue-400', icon: Briefcase },
   { id: 'content', labelAr: 'صناعة المحتوى', labelEn: 'Content Creation', color: 'bg-teal-500/10 text-teal-500', icon: PenTool },
   { id: 'edu', labelAr: 'تعليمي', labelEn: 'Education', color: 'bg-blue-500/10 text-blue-500', icon: GraduationCap },
   { id: 'design', labelAr: 'تصميم', labelEn: 'Design', color: 'bg-purple-500/10 text-purple-500', icon: Palette },
@@ -42,6 +41,7 @@ const ORDERED_CATEGORIES: CategoryItem[] = [
   { id: 'video', labelAr: 'فيديو', labelEn: 'Video Production', color: 'bg-red-500/10 text-red-500', icon: Video },
   { id: 'research', labelAr: 'البحث والتحليل', labelEn: 'Research & Analysis', color: 'bg-indigo-500/10 text-indigo-500', icon: Search },
 ];
+
 
 const ITEMS_PER_PAGE = 24;
 
@@ -89,12 +89,13 @@ export function LibraryView() {
           } else if (groupParam === 'marketing') {
             setIsResearchActive(false);
             setFilters((prev) => ({ ...prev, groups: ['ads', 'content'], onlyFavorites: false }));
-          } else if (['content', 'edu', 'design', 'video', 'cv', 'dev', 'ads'].includes(groupParam)) {
+          } else if (['sales', 'business', 'content', 'edu', 'design', 'video', 'cv', 'dev', 'ads'].includes(groupParam)) {
             setIsResearchActive(false);
             setFilters((prev) => ({ ...prev, groups: [groupParam as any], onlyFavorites: false }));
             if (groupParam === 'edu') setShowEduExplorer(true);
           }
         }
+
 
         if (searchParam) {
           setFilters((prev) => ({ ...prev, query: searchParam }));
@@ -184,6 +185,8 @@ export function LibraryView() {
       stages: [],
       subjects: [],
       tasks: [],
+      salesCategory: 'all',
+      businessCategory: 'all',
       contentCategory: 'all',
       adsCategory: 'all',
       cvCategory: 'all',
@@ -205,6 +208,8 @@ export function LibraryView() {
     filters.stages.length > 0 ||
     filters.subjects.length > 0 ||
     filters.tasks.length > 0 ||
+    (filters.salesCategory && filters.salesCategory !== 'all') ||
+    (filters.businessCategory && filters.businessCategory !== 'all') ||
     (filters.contentCategory && filters.contentCategory !== 'all') ||
     (filters.adsCategory && filters.adsCategory !== 'all') ||
     (filters.cvCategory && filters.cvCategory !== 'all') ||
@@ -214,6 +219,7 @@ export function LibraryView() {
     hasEduFilter ||
     isResearchActive
   );
+
 
   const toggleGroup = (groupId: string) => {
     setFilters((prev) => {
@@ -331,8 +337,41 @@ export function LibraryView() {
         })}
       </div>
 
+      {/* Sales & Lead Management Explorer Banner */}
+      {filters.groups.includes('sales') && (
+        <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+          <SalesFilterFlow
+            selectedSubcategory={filters.salesCategory || 'all'}
+            onSelectSubcategory={(subcatId) =>
+              setFilters((prev) => ({ ...prev, salesCategory: subcatId }))
+            }
+            onSelectShortcut={(code) =>
+              setFilters((prev) => ({ ...prev, query: code }))
+            }
+            totalMatches={filteredPrompts.length}
+          />
+        </div>
+      )}
+
+      {/* Business Explorer Banner */}
+      {filters.groups.includes('business') && (
+        <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+          <BusinessFilterFlow
+            selectedSubcategory={filters.businessCategory || 'all'}
+            onSelectSubcategory={(subcatId) =>
+              setFilters((prev) => ({ ...prev, businessCategory: subcatId }))
+            }
+            onSelectShortcut={(code) =>
+              setFilters((prev) => ({ ...prev, query: code }))
+            }
+            totalMatches={filteredPrompts.length}
+          />
+        </div>
+      )}
+
       {/* Content & Copywriting Explorer Banner */}
       {filters.groups.includes('content') && (
+
         <div className="animate-in fade-in slide-in-from-top-3 duration-300">
           <ContentFilterFlow
             selectedSubcategory={filters.contentCategory || 'all'}
@@ -351,6 +390,10 @@ export function LibraryView() {
       {(filters.groups.includes('edu') || showEduExplorer) && (
         <div className="animate-in fade-in slide-in-from-top-3 duration-300">
           <EduFilterFlow
+            selectedEduCategory={filters.eduCategory || 'all'}
+            onSelectEduCategory={(subcatId) =>
+              setFilters((prev) => ({ ...prev, eduCategory: subcatId }))
+            }
             totalMatches={filteredPrompts.length}
             onSelectShortcut={(query) =>
               setFilters((prev) => ({ ...prev, query }))

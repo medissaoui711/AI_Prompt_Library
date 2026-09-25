@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, GraduationCap, Palette, Video, FileText, Megaphone, Code2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, GraduationCap, Palette, Video, FileText, Megaphone, Code2, Layers, TrendingUp, Briefcase } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDirection } from '../../context/DirectionContext';
 import { useView } from '../../context/ViewContext';
@@ -15,7 +15,34 @@ export interface FeaturedCategoryItem {
   groupKeys: string[];
 }
 
-const FEATURED_SIX: FeaturedCategoryItem[] = [
+const FEATURED_CATEGORIES: FeaturedCategoryItem[] = [
+  {
+    id: 'carousel',
+    labelAr: 'المراجع والكاروسيل',
+    labelEn: 'Visual & Carousel',
+    icon: Layers,
+    color: 'text-rose-500',
+    bgLight: 'bg-rose-500/10',
+    groupKeys: ['carousel'],
+  },
+  {
+    id: 'sales',
+    labelAr: 'المبيعات والعملاء',
+    labelEn: 'Sales & Leads',
+    icon: TrendingUp,
+    color: 'text-emerald-600',
+    bgLight: 'bg-emerald-500/10',
+    groupKeys: ['sales'],
+  },
+  {
+    id: 'business',
+    labelAr: 'الأعمال والبيانات',
+    labelEn: 'Business & Data',
+    icon: Briefcase,
+    color: 'text-indigo-500',
+    bgLight: 'bg-indigo-500/10',
+    groupKeys: ['business'],
+  },
   {
     id: 'edu',
     labelAr: 'التعليم',
@@ -44,21 +71,12 @@ const FEATURED_SIX: FeaturedCategoryItem[] = [
     groupKeys: ['design'],
   },
   {
-    id: 'video',
-    labelAr: 'الفيديو',
-    labelEn: 'Video',
-    icon: Video,
-    color: 'text-red-500',
-    bgLight: 'bg-red-500/10',
-    groupKeys: ['video'],
-  },
-  {
     id: 'dev',
     labelAr: 'البرمجة',
     labelEn: 'Programming',
     icon: Code2,
-    color: 'text-emerald-500',
-    bgLight: 'bg-emerald-500/10',
+    color: 'text-cyan-500',
+    bgLight: 'bg-cyan-500/10',
     groupKeys: ['dev'],
   },
   {
@@ -69,6 +87,15 @@ const FEATURED_SIX: FeaturedCategoryItem[] = [
     color: 'text-purple-500',
     bgLight: 'bg-purple-500/10',
     groupKeys: ['cv'],
+  },
+  {
+    id: 'video',
+    labelAr: 'الفيديو',
+    labelEn: 'Video',
+    icon: Video,
+    color: 'text-red-500',
+    bgLight: 'bg-red-500/10',
+    groupKeys: ['video'],
   },
 ];
 
@@ -108,8 +135,8 @@ export function FeaturedCategories() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        {FEATURED_SIX.map((cat) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-4">
+        {FEATURED_CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           const count = prompts.filter((p) => cat.groupKeys.includes(p.group)).length;
           const label = isArabic ? cat.labelAr : cat.labelEn;

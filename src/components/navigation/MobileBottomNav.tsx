@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Library, Star, GraduationCap, Menu } from 'lucide-react';
+import { LayoutDashboard, Library, Star, GraduationCap, Menu, X } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useView } from '../../context/ViewContext';
 import { useNavigation } from './NavigationContext';
@@ -14,7 +14,7 @@ interface TabItem {
 }
 
 const mobileTabs: TabItem[] = [
-  { id: 'dashboard', icon: LayoutDashboard, labelAr: 'لوحة التحكم', labelEn: 'Dashboard' },
+  { id: 'dashboard', icon: LayoutDashboard, labelAr: 'الرئيسية', labelEn: 'Dashboard' },
   { id: 'library', icon: Library, labelAr: 'المكتبة', labelEn: 'Library' },
   { id: 'favorites', icon: Star, labelAr: 'المفضلة', labelEn: 'Favorites' },
   { id: 'academy', icon: GraduationCap, labelAr: 'الأكاديمية', labelEn: 'Academy' },
@@ -23,7 +23,7 @@ const mobileTabs: TabItem[] = [
 
 export function MobileBottomNav() {
   const { view, setView } = useView();
-  const { toggleMobileDrawer } = useNavigation();
+  const { toggleMobileDrawer, isMobileDrawerOpen, closeMobileDrawer } = useNavigation();
   const { isArabic } = useLanguage();
   const [currentHash, setCurrentHash] = useState(typeof window !== 'undefined' ? window.location.hash : '');
 
@@ -36,6 +36,12 @@ export function MobileBottomNav() {
   }, []);
 
   const isTabActive = (tabId: MobileTabId) => {
+    if (tabId === 'more') {
+      return isMobileDrawerOpen;
+    }
+    if (isMobileDrawerOpen) {
+      return false;
+    }
     if (tabId === 'dashboard') {
       return view === 'dashboard';
     }
@@ -54,18 +60,23 @@ export function MobileBottomNav() {
   const handleTabClick = (tabId: MobileTabId) => {
     if (tabId === 'more') {
       toggleMobileDrawer();
-    } else if (tabId === 'favorites') {
-      window.location.hash = '#library?favorites=true';
-      setView('library');
-    } else if (tabId === 'library') {
-      window.location.hash = '#library';
-      setView('library');
-    } else if (tabId === 'academy') {
-      window.location.hash = '#flows';
-      setView('flows');
-    } else if (tabId === 'dashboard') {
-      window.location.hash = '';
-      setView('dashboard');
+    } else {
+      if (isMobileDrawerOpen) {
+        closeMobileDrawer();
+      }
+      if (tabId === 'favorites') {
+        window.location.hash = '#library?favorites=true';
+        setView('library');
+      } else if (tabId === 'library') {
+        window.location.hash = '#library';
+        setView('library');
+      } else if (tabId === 'academy') {
+        window.location.hash = '#flows';
+        setView('flows');
+      } else if (tabId === 'dashboard') {
+        window.location.hash = '';
+        setView('dashboard');
+      }
     }
   };
 
@@ -76,9 +87,11 @@ export function MobileBottomNav() {
     >
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto px-2">
         {mobileTabs.map((tab) => {
-          const Icon = tab.icon;
+          const Icon = tab.id === 'more' && isMobileDrawerOpen ? X : tab.icon;
           const isActive = isTabActive(tab.id);
-          const label = isArabic ? tab.labelAr : tab.labelEn;
+          const label = tab.id === 'more' && isMobileDrawerOpen
+            ? (isArabic ? 'إغلاق' : 'Close')
+            : (isArabic ? tab.labelAr : tab.labelEn);
 
           return (
             <button
@@ -103,6 +116,7 @@ export function MobileBottomNav() {
               <div className={`transition-transform duration-150 ${isActive ? 'scale-110' : 'scale-100'}`}>
                 <Icon className={`w-5 h-5 ${isActive && tab.id === 'favorites' ? 'fill-current' : ''}`} />
               </div>
+
               <span className="text-[10px] tracking-tight truncate max-w-[64px]">
                 {label}
               </span>

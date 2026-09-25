@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Menu, Moon, Sun, AlignLeft, AlignRight, Sparkles, Settings } from 'lucide-react';
+import { Menu, X, Moon, Sun, AlignLeft, AlignRight, Sparkles, Settings } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDirection } from '../../context/DirectionContext';
@@ -18,7 +18,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const { lang, t, toggleLang, isArabic } = useLanguage();
   const { dir, toggleDir } = useDirection();
   const { view } = useView();
-  const { openMobileDrawer } = useNavigation();
+  const { isMobileDrawerOpen, toggleMobileDrawer } = useNavigation();
   const { isSettingsMenuOpen, toggleSettingsMenu, closeSettingsMenu } = useModals();
   const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
   const headerSettingsBtnRef = useRef<HTMLButtonElement>(null);
@@ -30,20 +30,37 @@ export function Header({ onMenuClick }: HeaderProps) {
     if (onMenuClick) {
       onMenuClick();
     } else {
-      openMobileDrawer();
+      toggleMobileDrawer();
     }
   };
 
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Mobile Hamburger Toggle Button - Opens and closes drawer in 1 click */}
+        <button
+          type="button"
+          onClick={handleMenuClick}
+          aria-label={isMobileDrawerOpen ? (t.closeMenu || 'إغلاق القائمة') : (t.openMenu || 'فتح القائمة')}
+          aria-expanded={isMobileDrawerOpen}
+          className={`
+            md:hidden flex h-10 w-10 items-center justify-center rounded-xl border transition-colors shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+            ${isMobileDrawerOpen 
+              ? 'bg-primary text-primary-foreground border-primary' 
+              : 'bg-card border-border text-foreground hover:bg-accent hover:border-primary/40'
+            }
+          `}
+        >
+          {isMobileDrawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+
         {/* Brand Icon */}
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm shrink-0">
           <Sparkles className="w-4 h-4" />
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold text-foreground md:hidden">{t.appName}</span>
+          <span className="text-base font-bold text-foreground md:hidden truncate">{t.appName}</span>
           <span className="hidden md:inline-block text-lg font-semibold text-foreground">{pageTitle}</span>
         </div>
       </div>

@@ -29,7 +29,7 @@ import { PWAInstallButton } from '../../pwa/PWAInstallButton';
 
 export interface GroupItemConfig {
   id: string;
-  groupKey: 'sales' | 'business' | 'edu' | 'marketing' | 'design' | 'video' | 'dev' | 'cv';
+  groupKey: 'sales' | 'business' | 'edu' | 'marketing' | 'design' | 'carousel' | 'video' | 'dev' | 'cv';
   icon: React.ComponentType<{ className?: string }>;
   labelAr: string;
   labelEn: string;
@@ -39,6 +39,7 @@ export const SIDEBAR_GROUPS: GroupItemConfig[] = [
   { id: 'sales', groupKey: 'sales', icon: TrendingUp, labelAr: 'المبيعات والعملاء', labelEn: 'Sales & Leads' },
   { id: 'business', groupKey: 'business', icon: Briefcase, labelAr: 'الأعمال والبيانات', labelEn: 'Business & Startup' },
   { id: 'edu', groupKey: 'edu', icon: GraduationCap, labelAr: 'التعليم', labelEn: 'Education' },
+  { id: 'carousel', groupKey: 'carousel', icon: Layers, labelAr: 'المراجع والكاروسيل', labelEn: 'Visual & Carousel' },
   { id: 'marketing', groupKey: 'marketing', icon: Megaphone, labelAr: 'التسويق', labelEn: 'Marketing' },
   { id: 'design', groupKey: 'design', icon: Palette, labelAr: 'التصميم', labelEn: 'Design' },
   { id: 'video', groupKey: 'video', icon: Video, labelAr: 'الفيديو', labelEn: 'Video' },

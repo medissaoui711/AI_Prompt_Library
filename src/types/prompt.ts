@@ -1,6 +1,6 @@
 import type { EduMetadata, EduStage as FullEduStage, EduSubject as FullEduSubject, EduTaskType } from './eduMetadata';
 
-export type PromptGroup = 'edu' | 'design' | 'video' | 'cv' | 'ads' | 'dev' | 'content' | 'business' | 'sales';
+export type PromptGroup = 'edu' | 'design' | 'video' | 'cv' | 'ads' | 'dev' | 'content' | 'business' | 'sales' | 'carousel';
 export type EduStage = 'early_childhood' | 'primary' | 'secondary' | 'university';
 export type EduSubject = 'arabic' | 'english' | 'math' | 'science' | 'physics' | 'chemistry' | 'biology' | 'history' | 'geography' | 'literature' | 'research' | 'statistics' | 'study_skills' | 'study-skills' | 'general';
 export type TaskType = 'explain' | 'practice' | 'quiz' | 'review' | 'solve' | 'research' | 'write' | 'present' | 'project' | 'lesson-plan' | 'assessment' | 'communication' | 'activity' | 'homework' | 'exam-prep' | 'critical-thinking';
@@ -47,6 +47,7 @@ export interface CommandPrompt {
   businessCategory?: string;
   salesCategory?: string;
   eduCategory?: string;
+  carouselCategory?: string;
   params: ParamDef[];
   example: string;
   qualityRules: string[];
@@ -88,6 +89,7 @@ export interface PromptFilters {
   businessCategory?: string;
   salesCategory?: string;
   eduCategory?: string;
+  carouselCategory?: string;
   onlyFavorites: boolean;
   sortBy: 'recent' | 'code' | 'usage';
 }
@@ -106,6 +108,7 @@ export const EMPTY_FILTERS: PromptFilters = {
   businessCategory: 'all',
   salesCategory: 'all',
   eduCategory: 'all',
+  carouselCategory: 'all',
   onlyFavorites: false,
   sortBy: 'recent'
 };

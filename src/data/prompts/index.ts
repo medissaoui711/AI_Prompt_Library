@@ -8,12 +8,14 @@ import { VIDEO_PROMPTS } from './video';
 import { CV_PROMPTS } from './cv';
 import { DEV_PROMPTS } from './dev';
 import { SALES_PROMPTS } from './sales';
+import { CAROUSEL_PROMPTS } from './carousel';
 
 export const ALL_PROMPTS: CommandPrompt[] = [
   ...BUSINESS_PROMPTS,
   ...CONTENT_PROMPTS,
   ...EDU_PROMPTS,
   ...ADS_PROMPTS,
+  ...CAROUSEL_PROMPTS,
   ...DESIGN_PROMPTS,
   ...VIDEO_PROMPTS,
   ...CV_PROMPTS,
@@ -21,6 +23,6 @@ export const ALL_PROMPTS: CommandPrompt[] = [
   ...SALES_PROMPTS,
 ];
 
-export { BUSINESS_PROMPTS, CONTENT_PROMPTS, ADS_PROMPTS, CV_PROMPTS, DEV_PROMPTS, SALES_PROMPTS };
+export { BUSINESS_PROMPTS, CONTENT_PROMPTS, ADS_PROMPTS, CV_PROMPTS, DEV_PROMPTS, SALES_PROMPTS, CAROUSEL_PROMPTS };
 
 

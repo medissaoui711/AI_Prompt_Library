@@ -113,6 +113,10 @@ export function filterPrompts(prompts: CommandPrompt[], filters: PromptFilters):
     result = result.filter(p => p.eduCategory === filters.eduCategory);
   }
 
+  if (filters.carouselCategory && filters.carouselCategory !== 'all') {
+    result = result.filter(p => p.carouselCategory === filters.carouselCategory);
+  }
+
   if (filters.query) {
     result = result.filter(p => matchesQuery(p, filters.query));
   }

@@ -3,6 +3,7 @@ export const PROMPT_GROUPS = [
   { id: 'business', labelKey: 'groupBusiness', color: 'bg-indigo-500/10 text-indigo-500', icon: 'Briefcase' },
   { id: 'content', labelKey: 'groupContent', color: 'bg-teal-500/10 text-teal-500', icon: 'PenTool' },
   { id: 'edu', labelKey: 'groupEdu', color: 'bg-blue-500/10 text-blue-500', icon: 'GraduationCap' },
+  { id: 'carousel', labelKey: 'groupCarousel', color: 'bg-rose-500/10 text-rose-500', icon: 'Layers' },
   { id: 'design', labelKey: 'groupDesign', color: 'bg-purple-500/10 text-purple-500', icon: 'Palette' },
   { id: 'ads', labelKey: 'groupAds', color: 'bg-amber-500/10 text-amber-500', icon: 'Megaphone' },
   { id: 'dev', labelKey: 'groupDev', color: 'bg-cyan-500/10 text-cyan-500', icon: 'Code2' },
@@ -22,6 +23,35 @@ export const SALES_SUBCATEGORIES = [
   { id: 'retention', labelAr: 'رعاية وتوسيع الحسابات', labelEn: 'Retention & Expansion', icon: 'Users', count: 10 },
   { id: 'crm', labelAr: 'تقارير وإدارة الـ CRM', labelEn: 'CRM, Pipeline & Metrics', icon: 'LayoutDashboard', count: 10 },
   { id: 'training', labelAr: 'تدريب ومحاكاة المبيعات', labelEn: 'Training & Roleplay', icon: 'GraduationCap', count: 10 },
+] as const;
+
+export const CAROUSEL_SUBCATEGORIES = [
+  { id: 'all', labelAr: 'الكل (44 أمراً للمراجع والكاروسيل والإنفوجرافيك)', labelEn: 'All (44 Visual & Carousel Prompts)', icon: 'Sparkles', count: 44 },
+  { id: 'style_audit', labelAr: 'تحليل الستايل البصري', labelEn: 'Visual Style & Design Tokens', icon: 'Eye', count: 7 },
+  { id: 'image_to_prompt', labelAr: 'تحويل صورة إلى Prompt', labelEn: 'Image to Prompt & Reverse Eng', icon: 'Camera', count: 3 },
+  { id: 'pdf_to_carousel', labelAr: 'تحويل PDF والملفات إلى Carousel', labelEn: 'PDF & Content to Carousel', icon: 'Layers', count: 8 },
+  { id: 'report_to_infographic', labelAr: 'تحويل تقرير إلى Infographic', labelEn: 'Report & Data to Infographic', icon: 'BarChart3', count: 7 },
+  { id: 'ideogram_flux', labelAr: 'توليد Prompts لـIdeogram وFlux', labelEn: 'Ideogram & Flux Prompts', icon: 'Sparkles', count: 7 },
+  { id: 'review_consistency', labelAr: 'مراجعة الكاروسيل وتناسق التصميم', labelEn: 'Carousel Review & Consistency', icon: 'CheckSquare', count: 6 },
+  { id: 'arabic_rtl', labelAr: 'ضبط العربية وRTL والتصدير', labelEn: 'Arabic Typography & RTL Design', icon: 'Globe', count: 6 },
+] as const;
+
+export const CAROUSEL_STARTER_SHORTCUTS = [
+  { labelAr: 'تحليل ستايل مرجعي', labelEn: 'Style Audit', code: '/style audit', id: 'car-aud-001' },
+  { labelAr: 'استخراج برومبت بصري', labelEn: 'Visual Prompt', code: '/visual prompt', id: 'car-aud-002' },
+  { labelAr: 'استخراج Design Tokens', labelEn: 'Design Tokens', code: '/design tokens', id: 'car-aud-003' },
+  { labelAr: 'تحويل PDF إلى كاروسيل', labelEn: 'PDF Carousel', code: '/pdf carousel', id: 'car-car-011' },
+  { labelAr: 'كاروسيل مستلهم من مرجع', labelEn: 'Reference Carousel', code: '/reference carousel', id: 'car-car-012' },
+  { labelAr: 'كاروسيل تقرير أو دراسة', labelEn: 'Report Carousel', code: '/report carousel', id: 'car-car-013' },
+  { labelAr: 'إنفوجرافيك من ملف أو تقرير', labelEn: 'File Infographic', code: '/file infographic', id: 'car-inf-019' },
+  { labelAr: 'برومبت Ideogram للنصوص', labelEn: 'Ideogram Prompt', code: '/ideogram prompt', id: 'car-gen-026' },
+  { labelAr: 'برومبت Flux فائق الواقعية', labelEn: 'Flux Prompt', code: '/flux prompt', id: 'car-gen-027' },
+  { labelAr: 'حزمة برومبتات لكل الشرائح', labelEn: 'Carousel Prompts', code: '/carousel prompts', id: 'car-gen-028' },
+  { labelAr: 'الحفاظ على الهوية البصرية', labelEn: 'Preserve Identity', code: '/visual identity preserve', id: 'car-gen-030' },
+  { labelAr: 'فحص وتدقيق الكاروسيل', labelEn: 'Carousel Review', code: '/carousel review', id: 'car-rev-033' },
+  { labelAr: 'ضبط اتجاه العربية RTL', labelEn: 'RTL Carousel', code: '/rtl carousel', id: 'car-rtl-039' },
+  { labelAr: 'توليفات خطوط عربية', labelEn: 'Arabic Typography', code: '/arabic typography design', id: 'car-rtl-040' },
+  { labelAr: 'كابشن مرافق للكاروسيل', labelEn: 'Carousel Caption', code: '/carousel caption', id: 'car-rtl-043' },
 ] as const;
 
 export const SALES_STARTER_SHORTCUTS = [

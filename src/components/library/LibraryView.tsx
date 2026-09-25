@@ -18,8 +18,9 @@ import { CvFilterFlow } from './CvFilterFlow';
 import { DevFilterFlow } from './DevFilterFlow';
 import { DesignFilterFlow } from './DesignFilterFlow';
 import { SalesFilterFlow } from './SalesFilterFlow';
+import { CarouselFilterFlow } from './CarouselFilterFlow';
 import { PROMPT_GROUPS, TASK_TYPES } from '../../data/groups';
-import { Briefcase, GraduationCap, Palette, Video, FileText, Megaphone, Code2, PenTool, Search, ChevronLeft, ChevronRight, Sparkles, Filter, Compass, TrendingUp } from 'lucide-react';
+import { Briefcase, GraduationCap, Palette, Video, FileText, Megaphone, Code2, PenTool, Search, ChevronLeft, ChevronRight, Sparkles, Filter, Compass, TrendingUp, Layers } from 'lucide-react';
 
 interface CategoryItem {
   id: string;
@@ -34,6 +35,7 @@ const ORDERED_CATEGORIES: CategoryItem[] = [
   { id: 'business', labelAr: 'بيزنس وريادة أعمال', labelEn: 'Business & Startup', color: 'bg-blue-600/10 text-blue-600 dark:text-blue-400', icon: Briefcase },
   { id: 'content', labelAr: 'صناعة المحتوى', labelEn: 'Content Creation', color: 'bg-teal-500/10 text-teal-500', icon: PenTool },
   { id: 'edu', labelAr: 'تعليمي', labelEn: 'Education', color: 'bg-blue-500/10 text-blue-500', icon: GraduationCap },
+  { id: 'carousel', labelAr: 'المراجع والكاروسيل', labelEn: 'Visual & Carousel', color: 'bg-rose-500/10 text-rose-500', icon: Layers },
   { id: 'design', labelAr: 'تصميم', labelEn: 'Design', color: 'bg-purple-500/10 text-purple-500', icon: Palette },
   { id: 'ads', labelAr: 'إعلانات تجارية', labelEn: 'Commercial Ads', color: 'bg-amber-500/10 text-amber-500', icon: Megaphone },
   { id: 'dev', labelAr: 'برمجة وتطوير', labelEn: 'Dev & Coding', color: 'bg-cyan-500/10 text-cyan-500', icon: Code2 },
@@ -89,7 +91,7 @@ export function LibraryView() {
           } else if (groupParam === 'marketing') {
             setIsResearchActive(false);
             setFilters((prev) => ({ ...prev, groups: ['ads', 'content'], onlyFavorites: false }));
-          } else if (['sales', 'business', 'content', 'edu', 'design', 'video', 'cv', 'dev', 'ads'].includes(groupParam)) {
+          } else if (['sales', 'business', 'content', 'edu', 'design', 'video', 'cv', 'dev', 'ads', 'carousel'].includes(groupParam)) {
             setIsResearchActive(false);
             setFilters((prev) => ({ ...prev, groups: [groupParam as any], onlyFavorites: false }));
             if (groupParam === 'edu') setShowEduExplorer(true);
@@ -441,6 +443,22 @@ export function LibraryView() {
             selectedSubcategory={filters.devCategory || 'all'}
             onSelectSubcategory={(subcatId) =>
               setFilters((prev) => ({ ...prev, devCategory: subcatId }))
+            }
+            onSelectShortcut={(code) =>
+              setFilters((prev) => ({ ...prev, query: code }))
+            }
+            totalMatches={filteredPrompts.length}
+          />
+        </div>
+      )}
+
+      {/* Visual Reference & Carousel Explorer Banner */}
+      {filters.groups.includes('carousel') && (
+        <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+          <CarouselFilterFlow
+            selectedSubcategory={filters.carouselCategory || 'all'}
+            onSelectSubcategory={(subcatId) =>
+              setFilters((prev) => ({ ...prev, carouselCategory: subcatId }))
             }
             onSelectShortcut={(code) =>
               setFilters((prev) => ({ ...prev, query: code }))

@@ -93,43 +93,50 @@ export function MobileDrawer() {
 
   return (
     <>
-      {/* Backdrop with fade-in animation */}
-      {isMobileDrawerOpen && (
-        <div
-          role="presentation"
-          onClick={closeMobileDrawer}
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm md:hidden animate-in fade-in duration-300"
-          aria-hidden="true"
-        />
-      )}
+      {/* Backdrop with smooth fade-in animation */}
+      <div
+        role="presentation"
+        onClick={closeMobileDrawer}
+        aria-hidden={!isMobileDrawerOpen}
+        className={`
+          fixed inset-0 z-50 bg-black/60 backdrop-blur-sm md:hidden transition-all duration-300
+          ${isMobileDrawerOpen 
+            ? 'opacity-100 visible pointer-events-auto' 
+            : 'opacity-0 invisible pointer-events-none'
+          }
+        `}
+      />
 
-      {/* Drawer Panel */}
+      {/* Drawer Panel - Bulletproof RTL/LTR physical positioning & visibility */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label={t.menu}
         className={`
-          fixed inset-y-0 start-0 z-50 flex flex-col w-[85vw] max-w-[320px]
-          bg-card text-card-foreground border-e border-border shadow-2xl md:hidden
-          transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
+          fixed inset-y-0 z-50 flex flex-col w-[85vw] max-w-[320px]
+          bg-card text-card-foreground shadow-2xl md:hidden
+          transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
           pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]
+          ${dir === 'rtl' ? 'right-0 left-auto border-s border-border' : 'left-0 right-auto border-e border-border'}
           ${isMobileDrawerOpen 
-            ? 'translate-x-0' 
-            : isArabic ? 'translate-x-full' : '-translate-x-full'
+            ? 'translate-x-0 opacity-100 visible pointer-events-auto' 
+            : dir === 'rtl'
+              ? 'translate-x-full opacity-0 invisible pointer-events-none'
+              : '-translate-x-full opacity-0 invisible pointer-events-none'
           }
         `}
       >
         {/* Drawer Header */}
-        <div className="flex h-16 items-center justify-between px-5 border-b border-border/80">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm">
+        <div className="flex h-16 items-center justify-between px-4 border-b border-border/80 shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h2 className="text-sm font-bold text-foreground truncate">
                 {t.appName}
               </h2>
-              <p className="text-[10px] text-muted-foreground font-mono">
+              <p className="text-[10px] text-muted-foreground font-mono truncate">
                 {t.version}
               </p>
             </div>
@@ -138,8 +145,8 @@ export function MobileDrawer() {
           <button
             type="button"
             onClick={closeMobileDrawer}
-            aria-label={t.closeMenu || 'Close menu'}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+            aria-label={t.closeMenu || 'إغلاق القائمة'}
+            className="w-10 h-10 rounded-xl flex items-center justify-center bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
